@@ -15,8 +15,8 @@ GUI=$(zenity --list --checklist \
 	TRUE "Update System" "Updates the package lists, the system packages and Applications."  \
 	TRUE "Enable PPAs" "Another extra layer of security and another level of annoyance. You cannot add PPA by default in Loki." \
 	FALSE "Install Elementary Tweaks" "Installing themes in elementary OS is a much easier task thanks to elementary Tweaks tool." \
-    TRUE "Install Elementary Full Icon Theme" "Installs Elementary Full Icon Theme. A mega pack of icons for elementary OS." \
-    FALSE "Add Oibaf Repository" "This repository contain updated and optimized open graphics drivers." \
+    	TRUE "Install Elementary Full Icon Theme" "Installs Elementary Full Icon Theme. A mega pack of icons for elementary OS." \
+    	FALSE "Add Oibaf Repository" "This repository contain updated and optimized open graphics drivers." \
 	FALSE "Install Gufw Firewall" "Gufw is an easy and intuitive way to manage your linux firewall." \
 	FALSE "Install Notes-up" "Aimed for elementary OS, notes-up is a virtual notebook manager were you can write your notes in markdown format." \
 	FALSE "Install Support for Archive Formats" "Installs support for archive formats(.zip, .rar, .p7)." \
@@ -24,6 +24,7 @@ GUI=$(zenity --list --checklist \
 	TRUE "Install GDebi" "Installs GDebi. A simple tool to install deb files." \
 	FALSE "Install Google Chrome" "Installs Google Chrome 64bits. A browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier." \
 	FALSE "Install Chromium" "Installs Chromium. An open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web." \
+	FALSE "Install Opera" "Installs Opera. Fast, secure, easy-to-use browser" \
 	FALSE "Install Firefox" "Installs Firefox. A free and open-source web browser." \
 	FALSE "Install Skype" "Video chat, make international calls, instant message and more with Skype." \
 	FALSE "Install Dropbox" "Installs Dropbox with wingpanel support. Dropbox is a free service that lets you bring your photos, docs, and videos anywhere and share them easily." \
@@ -204,6 +205,18 @@ then
 	installPackage chromium-browser
 fi
 
+# Install Opera
+if [[ $GUI == *"Install Opera"* ]]
+then
+	clear
+	echo "Installing Opera..."
+	echo ""
+	sudo add-apt-repository 'deb https://deb.opera.com/opera-stable/ stable non-free' -y
+	wget -qO- https://deb.opera.com/archive.key | sudo apt-key add -
+	sudo apt update
+	installPackage opera-stable
+fi
+
 # Install Firefox Action
 if [[ $GUI == *"Install Firefox"* ]]
 then
@@ -258,7 +271,7 @@ then
 	clear
 	echo "Installing Go For It!..."
 	echo ""
-	sudo apt-add-repository -r ppa:go-for-it-team/go-for-it-daily -y    #remove if already installed
+	sudo add-apt-repository -r ppa:go-for-it-team/go-for-it-daily -y    #remove if already installed
   	sudo apt update
 	sudo add-apt-repository -y ppa:go-for-it-team/go-for-it-daily
 	sudo apt-get update
