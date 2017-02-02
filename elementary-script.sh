@@ -42,6 +42,7 @@ GUI=$(zenity --list --checklist \
 	FALSE "Install TLP" "Install TLP to save battery and prevent overheating." \
 	FALSE "Install Redshift" "Use night shift to save your eyes." \
 	FALSE "Install Disk Utility" "Gnome Disk Utility is a tool to manage disk drives and media." \
+	FALSE "Install Spotify" "A desktop software to listen music by streaming with the possibility to create and share playlists.." \
 	TRUE "Install Ubuntu Restricted Extras" "Installs commonly used applications with restricted copyright (mp3, avi, mpeg, TrueType, Java, Flash, Codecs)." \
 	TRUE "Fix Broken Packages" "Fixes the broken packages." \
 	TRUE "Clean-Up Junk" "Removes unnecessary packages and the local repository of retrieved package files." \
@@ -408,6 +409,18 @@ then
 	echo "Installing Gnome Disk Utility..."
 	echo ""
 	installPackage gnome-disk-utility
+fi
+
+# Install Spotify
+if [[ $GUI == *"Install Spotify"* ]]
+then
+	clear
+	echo "Installing Spotify..."
+	echo ""
+	sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
+	echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
+	sudo apt-get update
+	installPackage spotify-client
 fi
 
 # Install Ubuntu Restricted Extras Action
