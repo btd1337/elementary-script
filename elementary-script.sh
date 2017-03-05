@@ -1,12 +1,55 @@
 #!/bin/bash
 
+function installPackage() {
+		name=$1
+		package=$(dpkg --get-selections | grep "$name" )
+		echo
+		echo -n "Verifying that the $name package is installed."
+		sleep 2
+		echo "$package"
+		echo
+		if [ -n "$package" ] ;
+		then echo
+		     echo "Package $name is already installed."
+		else echo
+		     echo "Package $name required-> Not installed"
+		     echo "Automatically installing the package..."
+		     sudo apt -y install $name
+		fi
+}
+
+function addRepository() {
+	repository=$1
+	sudo apt-add-repository -r $repository -y    #remove if already installed
+	sudo apt update
+	sudo add-apt-repository -y $repository
+	sudo apt update
+}
+
+#Install x11-utils, we need xwininfo for auto adjust window
+installPackage x11-utils
+
+#define the height in px of the top system-bar:
+TOPMARGIN=27
+
+#sum in px of all horizontal borders:
+RIGHTMARGIN=10
+
+# get width of screen and height of screen
+SCREEN_WIDTH=$(xwininfo -root | awk '$1=="Width:" {print $2}')
+SCREEN_HEIGHT=$(xwininfo -root | awk '$1=="Height:" {print $2}')
+
+# new width and height
+W=$(( $SCREEN_WIDTH / 1 - $RIGHTMARGIN ))
+H=$(( $SCREEN_HEIGHT - 2 * $TOPMARGIN ))
+
 # Clear the Terminal
 clear
 
 # Zenity
 GUI=$(zenity --list --checklist \
-	--height 500 \
-	--width 900 \
+	--height $H \
+	--width $W \
 	--title="elementary-script" \
 	--text "Pick one or multiple Actions to execute." \
 	--column=Picks \
@@ -14,9 +57,10 @@ GUI=$(zenity --list --checklist \
 	--column=Description \
 	TRUE "Update System" "Updates the package lists, the system packages and Applications."  \
 	TRUE "Enable PPAs" "Another extra layer of security and another level of annoyance. You cannot add PPA by default in Loki." \
+	FALSE "Enable Plank magnifying effect" "Enabling OSX-style zoom in Plank" \
 	FALSE "Install Elementary Tweaks" "Installing themes in elementary OS is a much easier task thanks to elementary Tweaks tool." \
-    	TRUE "Install Elementary Full Icon Theme" "Installs Elementary Full Icon Theme. A mega pack of icons for elementary OS." \
-    	FALSE "Add Oibaf Repository" "This repository contain updated and optimized open graphics drivers." \
+	TRUE "Install Elementary Full Icon Theme" "Installs Elementary Full Icon Theme. A mega pack of icons for elementary OS." \
+	FALSE "Add Oibaf Repository" "This repository contain updated and optimized open graphics drivers." \
 	FALSE "Install Gufw Firewall" "Gufw is an easy and intuitive way to manage your linux firewall." \
 	FALSE "Install Notes-up" "Aimed for elementary OS, notes-up is a virtual notebook manager were you can write your notes in markdown format." \
 	FALSE "Install Support for Archive Formats" "Installs support for archive formats(.zip, .rar, .p7)." \
@@ -26,10 +70,12 @@ GUI=$(zenity --list --checklist \
 	FALSE "Install Chromium" "Installs Chromium. An open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web." \
 	FALSE "Install Opera" "Installs Opera. Fast, secure, easy-to-use browser" \
 	FALSE "Install Firefox" "Installs Firefox. A free and open-source web browser." \
+	FALSE "Replace Pantheon Mail by the Thunderbird Mail" "Pantheon Mail contain some bugs. Replace it by the great Thunderbird" \
 	FALSE "Install Skype" "Video chat, make international calls, instant message and more with Skype." \
 	FALSE "Install Dropbox" "Installs Dropbox with wingpanel support. Dropbox is a free service that lets you bring your photos, docs, and videos anywhere and share them easily." \
 	FALSE "Install Liferea" "Installs Liferea. a web feed reader/news aggregator that brings together all of the content from your favorite subscriptions into a simple interface that makes it easy to organize and browse feeds. Its GUI is similar to a desktop mail/newsclient, with an embedded graphical browser." \
 	FALSE "Install Go For It!" "Go For It! is a simple and stylish productivity app, featuring a to-do list, merged with a timer that keeps your focus on the current task." \
+	FALSE "Install Klavaro" "Installs the Klavaro a free touch typing tutor program." \
 	FALSE "Install VLC" "Installs VLC. A free and open source cross-platform multimedia player and framework that plays most multimedia files as well as DVDs, Audio CDs, VCDs, and various streaming protocols." \
 	FALSE "Install Clementine Music Player" "Installs Clementine. One of the Best Music Players and library organizer on Linux." \
 	FALSE "Install Gimp" "GIMP is an advanced picture editor. You can use it to edit, enhance, and retouch photos and scans, create drawings, and make your own images." \
@@ -42,28 +88,11 @@ GUI=$(zenity --list --checklist \
 	FALSE "Install TLP" "Install TLP to save battery and prevent overheating." \
 	FALSE "Install Redshift" "Use night shift to save your eyes." \
 	FALSE "Install Disk Utility" "Gnome Disk Utility is a tool to manage disk drives and media." \
+	FALSE "Install Brasero" "A CD/DVD burning application for Linux" \
 	TRUE "Install Ubuntu Restricted Extras" "Installs commonly used applications with restricted copyright (mp3, avi, mpeg, TrueType, Java, Flash, Codecs)." \
 	TRUE "Fix Broken Packages" "Fixes the broken packages." \
 	TRUE "Clean-Up Junk" "Removes unnecessary packages and the local repository of retrieved package files." \
 	--separator=', ');
-
-	function installPackage() {
-		name=$1
-		package=$(dpkg --get-selections | grep "$name" )
-		echo
-	  echo -n "Verifying that the $name package is installed."
-		sleep 2
-		echo "$package"
-		echo
-		if [ -n "$package" ] ;
-		then echo
-		     echo "Package $name is already installed."
-		else echo
-		     echo "Package $name required-> Not installed"
-		     echo "Automatically installing the package..."
-		     sudo apt -y install $name
-		fi
-	}
 
 # Update System Action
 if [[ $GUI == *"Update System"* ]]
@@ -84,16 +113,29 @@ then
 	installPackage software-properties-common
 fi
 
+# Install Enable Plank magnifying effect
+ if [[ $GUI == *"Enable Plank magnifying effect"* ]]
+ then
+	plankVersion=0.11.3+bzr1586-0ubuntu1~16.04~ricotz1
+	clear
+	echo "Enabling Plank magnifying effect..."
+ 	echo ""
+ 	sudo apt --purge remove -y plank
+ 	addRepository ppa:ricotz/docky
+ 	sudo apt -y install plank=$plankVersion libplank-common=$plankVersion libplank-doc=$plankVersion libplank1=$plankVersion libplank1-dbg=$plankVersion plank-dbg=$plankVersion
+
+	sudo apt-mark hold plank libplank-common libplank-doc libplank1 libplank1-dbg plank-dbg
+	echo "Enable Zoom option now!"
+	plank --preferences
+fi
+
 # Install Elementary Tweaks Action
 if [[ $GUI == *"Install Elementary Tweaks"* ]]
 then
 	clear
 	echo "Installing Elementary Tweaks..."
 	echo ""
-  	sudo apt-add-repository -r ppa:philip.scott/elementary-tweaks -y    #remove if already installed
-  	sudo apt update
-	sudo add-apt-repository -y ppa:philip.scott/elementary-tweaks
-	sudo apt update
+	addRepository ppa:philip.scott/elementary-tweaks
 	installPackage elementary-tweaks
 fi
 
@@ -125,10 +167,7 @@ then
 	clear
 	echo "Adding Oibaf Repository and updating..."
 	echo ""
-  	sudo apt-add-repository -r ppa:oibaf/graphics-drivers -y    #remove if already installed
-  	sudo apt update
-	sudo add-apt-repository -y ppa:oibaf/graphics-drivers
-	sudo apt update
+	addRepository ppa:oibaf/graphics-drivers
 	sudo apt -y full-upgrade
 fi
 
@@ -147,10 +186,7 @@ then
 	clear
 	echo "Installing Notes-up..."
 	echo ""
-	sudo apt-add-repository -r ppa:philip.scott/notes-up -y    #remove if already installed
-  	sudo apt update
-	sudo add-apt-repository -y ppa:philip.scott/notes-up
-	sudo apt-get update
+	addRepository ppa:philip.scott/notes-up
 	installPackage notes-up
 fi
 
@@ -226,6 +262,17 @@ then
 	installPackage firefox
 fi
 
+# Install Thunderbird Action
+if [[ $GUI == *"Replace Pantheon Mail by the Thunderbird Mail"* ]]
+then
+	clear
+	echo "Removing Pantheon Mail..."
+	sudo apt --purge remove -y pantheon-mail
+	echo "Installing Thunderbird..."
+	echo ""
+	installPackage thunderbird 
+fi
+
 # Install Skype Action
 if [[ $GUI == *"Install Skype"* ]]
 then
@@ -271,11 +318,17 @@ then
 	clear
 	echo "Installing Go For It!..."
 	echo ""
-	sudo add-apt-repository -r ppa:go-for-it-team/go-for-it-daily -y    #remove if already installed
-  	sudo apt update
-	sudo add-apt-repository -y ppa:go-for-it-team/go-for-it-daily
-	sudo apt-get update
+	addRepository ppa:go-for-it-team/go-for-it-daily
 	installPackage go-for-it
+fi
+
+# Install Klavaro Action
+if [[ $GUI == *"Install Klavaro"* ]]
+then
+	clear
+	echo "Installing Klavaro..."
+	echo ""
+	installPackage klavaro
 fi
 
 # Install VLC Action
@@ -329,10 +382,7 @@ then
 	clear
 	echo "Installing Atom..."
 	echo ""
-  	sudo apt-add-repository -r ppa:webupd8team/atom -y    #remove if already installed
-  	sudo apt update
-	sudo add-apt-repository -y ppa:webupd8team/atom
-	sudo apt -y update
+	addRepository ppa:webupd8team/atom
 	installPackage atom
 fi
 
@@ -342,10 +392,7 @@ then
 	clear
 	echo "Installing Sublime Text 3..."
 	echo ""
-  	sudo apt-add-repository -r ppa:webupd8team/sublime-text-3 -y    #remove if already installed
-  	sudo apt update
-	sudo add-apt-repository -y ppa:webupd8team/sublime-text-3
-	sudo apt -y update
+  	addRepository ppa:webupd8team/sublime-text-3
 	installPackage sublime-text-installer
 fi
 
@@ -408,6 +455,15 @@ then
 	echo "Installing Gnome Disk Utility..."
 	echo ""
 	installPackage gnome-disk-utility
+fi
+
+# Install Brasero Action
+if [[ $GUI == *"Install Brasero"* ]]
+then
+	clear
+	echo "Installing Brasero..."
+	echo ""
+	installPackage brasero
 fi
 
 # Install Ubuntu Restricted Extras Action
