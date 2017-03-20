@@ -10,6 +10,19 @@ elementary-script will always support the lastest stable version of elementary O
 
 ## Run
 
+#### with curl
+
+```shell
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/btd1337/elementary-script/master/elementary-script.sh)"
+```
+
+#### with wget
+
+```shell
+bash -c "$(wget https://raw.githubusercontent.com/btd1337/elementary-script/master/elementary-script.sh -O -)"
+```
+#### Cloning git
+
 Copy and paste the following line into a terminal window in order to run the script.
 
 ```bash
