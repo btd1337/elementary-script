@@ -57,7 +57,6 @@ GUI=$(zenity --list --checklist \
 	--column=Description \
 	TRUE "Update System" "Updates the package lists, the system packages and Applications."  \
 	TRUE "Enable PPAs" "Another extra layer of security and another level of annoyance. You cannot add PPA by default in Loki." \
-	FALSE "Enable Plank magnifying effect" "Enabling OSX-style zoom in Plank" \
 	FALSE "Install Elementary Tweaks" "Installing themes in elementary OS is a much easier task thanks to elementary Tweaks tool." \
 	TRUE "Install Elementary Full Icon Theme" "Installs Elementary Full Icon Theme. A mega pack of icons for elementary OS." \
 	FALSE "Add Oibaf Repository" "This repository contain updated and optimized open graphics drivers." \
@@ -112,22 +111,6 @@ then
 	echo "Enabling PPAs..."
 	echo ""
 	installPackage software-properties-common
-fi
-
-# Install Enable Plank magnifying effect
- if [[ $GUI == *"Enable Plank magnifying effect"* ]]
- then
-	plankVersion=0.11.3+bzr1586-0ubuntu1~16.04~ricotz1
-	clear
-	echo "Enabling Plank magnifying effect..."
- 	echo ""
- 	sudo apt --purge remove -y plank
- 	addRepository ppa:ricotz/docky
- 	sudo apt -y install plank=$plankVersion libplank-common=$plankVersion libplank-doc=$plankVersion libplank1=$plankVersion libplank1-dbg=$plankVersion plank-dbg=$plankVersion
-
-	sudo apt-mark hold plank libplank-common libplank-doc libplank1 libplank1-dbg plank-dbg
-	echo "Enable Zoom option now!"
-	plank --preferences
 fi
 
 # Install Elementary Tweaks Action
@@ -511,3 +494,4 @@ fi
 # Notification
 clear
 notify-send -i utilities-terminal elementary-script "All tasks ran successfully!"
+
