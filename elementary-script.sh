@@ -407,7 +407,7 @@ then
 	#Fonts, Interface Translate, Dictionary
 	wget -O /tmp/wps-office-fonts_1.0_all.deb http://kdl.cc.ksosoft.com/wps-community/download/fonts/wps-office-fonts_1.0_all.deb
 	wget -O /tmp/wps-office-ul_10.1.0.5503-0kaiana05052016_all.deb http://repo.uniaolivre.com/packages/xenial/wps-office-ul_10.1.0.5503-0kaiana05052016_all.deb
-	wget -O /tmp/wps-office-language-all_0.1_all.deb https://doc-0k-5g-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/vmsics07sveefmft458910ml3prvahpt/1480881600000/05316569172087402966/*/0B7HGeEB4kyvMaU5SbkdRRjBYWHc?e=download
+	wget -O /tmp/wps-office-language-all_0.1_all.deb https://doc-0k-5g-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/5e6qmvsn8khsfsidk1dorpbg4dmlpf8m/1495634400000/05316569172087402966/*/0B7HGeEB4kyvMaU5SbkdRRjBYWHc?e=download
 	sudo dpkg -i /tmp/wps-office-fonts_1.0_all.deb
 	sudo dpkg -i /tmp/wps-office-ul_10.1.0.5503-0kaiana05052016_all.deb
 	sudo dpkg -i /tmp/wps-office-language-all_0.1_all.deb
