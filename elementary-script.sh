@@ -63,20 +63,19 @@ function main() {
 		FALSE "Fix keyboard accents on latin keyboard" "Autostart ibus-daemon, you may want to check it if you're having issues with accents on Qt apps" \
 		FALSE "Fix screenshot shortcut" "Set screenshot shortcuts keys, check this if the screenshot keys aren't working as they should" \
 		FALSE "Update System" "Updates the package lists, the system packages and Applications."  \
+		FALSE "Install Support for Archive Formats" "Installs support for archive formats(.zip, .rar, .p7)." \
 		FALSE "Enable PPAs" "Another extra layer of security and another level of annoyance. You cannot add PPA by default in Loki." \
 		FALSE "Install Elementary Tweaks" "Installing themes in elementary OS is a much easier task thanks to elementary Tweaks tool." \
 		FALSE "Install Elementary Full Icon Theme" "Installs Elementary Full Icon Theme. A mega pack of icons for elementary OS." \
 		FALSE "Add Oibaf Repository" "This repository contain updated and optimized open graphics drivers." \
 		FALSE "Install Gufw Firewall" "Gufw is an easy and intuitive way to manage your linux firewall." \
 		FALSE "Install Notes-up" "Aimed for elementary OS, notes-up is a virtual notebook manager were you can write your notes in markdown format." \
-		FALSE "Install Support for Archive Formats" "Installs support for archive formats(.zip, .rar, .p7)." \
 		FALSE "Install Startup Disk Creator" "Startup Disk Creator converts a USB key or SD card into a volume from which you can start up and run OS Linux" \
 		FALSE "Install GDebi" "Installs GDebi. A simple tool to install deb files." \
 		FALSE "Install Google Chrome" "Installs Google Chrome 64bits. A browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier." \
 		FALSE "Install Chromium" "Installs Chromium. An open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web." \
 		FALSE "Install Opera" "Installs Opera. Fast, secure, easy-to-use browser" \
 		FALSE "Install Firefox" "Installs Firefox. A free and open-source web browser." \
-		FALSE "Replace Pantheon Mail by the Thunderbird Mail" "Pantheon Mail contain some bugs. Replace it by the great Thunderbird" \
 		FALSE "Install Skype" "Video chat, make international calls, instant message and more with Skype." \
 		FALSE "Install Dropbox" "Installs Dropbox with wingpanel support. Dropbox is a free service that lets you bring your photos, docs, and videos anywhere and share them easily." \
 		FALSE "Install Liferea" "Installs Liferea. a web feed reader/news aggregator that brings together all of the content from your favorite subscriptions into a simple interface that makes it easy to organize and browse feeds. Its GUI is similar to a desktop mail/newsclient, with an embedded graphical browser." \
@@ -127,7 +126,7 @@ function parse_opt() {
 
 	if [[ $opt == *"Fix screenshot shortcut"* ]]
 	then
-		not_implemented_error_msg
+		not_implemented_error_msg "Fix screenshot shortcut"
 	fi
 
 	# Update System Action
