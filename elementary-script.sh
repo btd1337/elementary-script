@@ -26,6 +26,14 @@ function addRepository() {
 	sudo apt update
 }
 
+function error_msg() {
+	zenity --error --text="${1}" --ellipsize
+}
+
+function ppa_error() {
+	error_msg "The package $1 couldn't be installed\nWe disabled any package that use ppa's for now."
+}
+
 #Install x11-utils, we need xwininfo for auto adjust window
 installPackage x11-utils
 
@@ -55,17 +63,17 @@ GUI=$(zenity --list --checklist \
 	--column=Picks \
 	--column=Actions \
 	--column=Description \
-	TRUE "Update System" "Updates the package lists, the system packages and Applications."  \
-	TRUE "Enable PPAs" "Another extra layer of security and another level of annoyance. You cannot add PPA by default in Loki." \
+	FALSE "Update System" "Updates the package lists, the system packages and Applications."  \
+	FALSE "Enable PPAs" "Another extra layer of security and another level of annoyance. You cannot add PPA by default in Loki." \
 	FALSE "Enable Plank magnifying effect" "Enabling OSX-style zoom in Plank" \
 	FALSE "Install Elementary Tweaks" "Installing themes in elementary OS is a much easier task thanks to elementary Tweaks tool." \
-	TRUE "Install Elementary Full Icon Theme" "Installs Elementary Full Icon Theme. A mega pack of icons for elementary OS." \
+	FALSE "Install Elementary Full Icon Theme" "Installs Elementary Full Icon Theme. A mega pack of icons for elementary OS." \
 	FALSE "Add Oibaf Repository" "This repository contain updated and optimized open graphics drivers." \
 	FALSE "Install Gufw Firewall" "Gufw is an easy and intuitive way to manage your linux firewall." \
 	FALSE "Install Notes-up" "Aimed for elementary OS, notes-up is a virtual notebook manager were you can write your notes in markdown format." \
 	FALSE "Install Support for Archive Formats" "Installs support for archive formats(.zip, .rar, .p7)." \
 	FALSE "Install Startup Disk Creator" "Startup Disk Creator converts a USB key or SD card into a volume from which you can start up and run OS Linux" \
-	TRUE "Install GDebi" "Installs GDebi. A simple tool to install deb files." \
+	FALSE "Install GDebi" "Installs GDebi. A simple tool to install deb files." \
 	FALSE "Install Google Chrome" "Installs Google Chrome 64bits. A browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier." \
 	FALSE "Install Chromium" "Installs Chromium. An open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web." \
 	FALSE "Install Opera" "Installs Opera. Fast, secure, easy-to-use browser" \
@@ -90,17 +98,15 @@ GUI=$(zenity --list --checklist \
 	FALSE "Install Disk Utility" "Gnome Disk Utility is a tool to manage disk drives and media." \
 	FALSE "Install Brasero" "A CD/DVD burning application for Linux" \
 	FALSE "Install Spotify" "A desktop software to listen music by streaming with the possibility to create and share playlists.." \
-	TRUE "Install Ubuntu Restricted Extras" "Installs commonly used applications with restricted copyright (mp3, avi, mpeg, TrueType, Java, Flash, Codecs)." \
-	TRUE "Fix Broken Packages" "Fixes the broken packages." \
-	TRUE "Clean-Up Junk" "Removes unnecessary packages and the local repository of retrieved package files." \
+	FALSE "Install Ubuntu Restricted Extras" "Installs commonly used applications with restricted copyright (mp3, avi, mpeg, TrueType, Java, Flash, Codecs)." \
+	FALSE "Fix Broken Packages" "Fixes the broken packages." \
+	FALSE "Clean-Up Junk" "Removes unnecessary packages and the local repository of retrieved package files." \
 	--separator=', ');
 
 # Update System Action
 if [[ $GUI == *"Update System"* ]]
 then
-	clear
 	echo "Updating system..."
-	echo ""
 	sudo apt -y update
 	sudo apt -y full-upgrade
 fi
@@ -108,34 +114,29 @@ fi
 # Enable PPAs
 if [[ $GUI == *"Enable PPAs"* ]]
 then
-	clear
 	echo "Enabling PPAs..."
-	echo ""
 	installPackage software-properties-common
 fi
 
 # Install Enable Plank magnifying effect
  if [[ $GUI == *"Enable Plank magnifying effect"* ]]
  then
-	plankVersion=0.11.3+bzr1586-0ubuntu1~16.04~ricotz1
-	clear
-	echo "Enabling Plank magnifying effect..."
- 	echo ""
- 	sudo apt --purge remove -y plank
- 	addRepository ppa:ricotz/docky
- 	sudo apt -y install plank=$plankVersion libplank-common=$plankVersion libplank-doc=$plankVersion libplank1=$plankVersion libplank1-dbg=$plankVersion plank-dbg=$plankVersion
-
-	sudo apt-mark hold plank libplank-common libplank-doc libplank1 libplank1-dbg plank-dbg
-	echo "Enable Zoom option now!"
-	plank --preferences
+	# plankVersion=0.11.3+bzr1586-0ubuntu1~16.04~ricotz1
+	# echo "Enabling Plank magnifying effect..."
+ # 	sudo apt --purge remove -y plank
+ # 	addRepository ppa:ricotz/docky
+ # 	sudo apt -y install plank=$plankVersion libplank-common=$plankVersion libplank-doc=$plankVersion libplank1=$plankVersion libplank1-dbg=$plankVersion plank-dbg=$plankVersion
+	#
+	# sudo apt-mark hold plank libplank-common libplank-doc libplank1 libplank1-dbg plank-dbg
+	# echo "Enable Zoom option now!"
+	# plank --preferences
+	ppa_error "Plank magnifying effect"
 fi
 
 # Install Elementary Tweaks Action
 if [[ $GUI == *"Install Elementary Tweaks"* ]]
 then
-	clear
 	echo "Installing Elementary Tweaks..."
-	echo ""
 	addRepository ppa:philip.scott/elementary-tweaks
 	installPackage elementary-tweaks
 fi
@@ -143,19 +144,16 @@ fi
 # Install  Elementary Full Icon Theme
 if [[ $GUI == *"Install Elementary Full Icon Theme"* ]]
 then
-	clear
 	installPackage git
 
 	directory=/usr/share/icons/elementary-full-icon-theme
 	if [ -d "$directory" ];	#Verifying if directory exists
 	then
 		echo "The icon-pack already installed. They will be updated now..."
-		echo ""
   	cd /usr/share/icons/elementary-full-icon-theme
 		git pull
 	else
 		echo "Installing Elementary Full Icon Theme..."
-		echo ""
 		git clone https://github.com/btd1337/elementary-full-icon-theme
 		sudo mv elementary-full-icon-theme /usr/share/icons/
 	fi
@@ -165,28 +163,23 @@ fi
 # Add Oibaf Repository
 if [[ $GUI == *"Add Oibaf Repository"* ]]
 then
-	clear
-	echo "Adding Oibaf Repository and updating..."
-	echo ""
-	addRepository ppa:oibaf/graphics-drivers
-	sudo apt -y full-upgrade
+	# echo "Adding Oibaf Repository and updating..."
+	# addRepository ppa:oibaf/graphics-drivers
+	# sudo apt -y full-upgrade
+	ppa_error "Oibaf"
 fi
 
 # Install Gufw Firewall Action
 if [[ $GUI == *"Install Gufw Firewall"* ]]
 then
-	clear
 	echo "Installing Gufw Firewall..."
-	echo ""
 	installPackage gufw
 fi
 
 # Install Notes-up
 if [[ $GUI == *"Install Notes-up"* ]]
 then
-	clear
 	echo "Installing Notes-up..."
-	echo ""
 	addRepository ppa:philip.scott/notes-up
 	installPackage notes-up
 fi
@@ -194,18 +187,14 @@ fi
 # Install Startup Disk Creator
 if [[ $GUI == *"Install Startup Disk Creator"* ]]
 then
-	clear
 	echo "Installing Startup Disk Creator"
-	echo ""
 	installPackage usb-creator-gtk
 fi
 
 # Install Support for Archive Formats Action
 if [[ $GUI == *"Install Support for Archive Formats"* ]]
 then
-	clear
 	echo "Installing Support for Archive Formats"
-	echo ""
 	installPackage zip
 	installPackage unzip
 	installPackage p7zip
@@ -217,18 +206,14 @@ fi
 # Install GDebi Action
 if [[ $GUI == *"Install GDebi"* ]]
 then
-	clear
 	echo "Installing GDebi..."
-	echo ""
 	installPackage gdebi
 fi
 
 # Install Google Chrome Action
 if [[ $GUI == *"Install Google Chrome"* ]]
 then
-	clear
 	echo "Installing Google Chrome..."
-	echo ""
 	wget -O /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 	sudo dpkg -i /tmp/google-chrome-stable_current_amd64.deb
 fi
@@ -236,18 +221,14 @@ fi
 # Install Chromium
 if [[ $GUI == *"Install Chromium"* ]]
 then
-	clear
 	echo "Installing Chromium..."
-	echo ""
 	installPackage chromium-browser
 fi
 
 # Install Opera
 if [[ $GUI == *"Install Opera"* ]]
 then
-	clear
 	echo "Installing Opera..."
-	echo ""
 	sudo add-apt-repository 'deb https://deb.opera.com/opera-stable/ stable non-free' -y
 	wget -qO- https://deb.opera.com/archive.key | sudo apt-key add -
 	sudo apt update
@@ -257,29 +238,23 @@ fi
 # Install Firefox Action
 if [[ $GUI == *"Install Firefox"* ]]
 then
-	clear
 	echo "Installing Firefox..."
-	echo ""
 	installPackage firefox
 fi
 
 # Install Thunderbird Action
 if [[ $GUI == *"Replace Pantheon Mail by the Thunderbird Mail"* ]]
 then
-	clear
 	echo "Removing Pantheon Mail..."
 	sudo apt --purge remove -y pantheon-mail
 	echo "Installing Thunderbird..."
-	echo ""
-	installPackage thunderbird 
+	installPackage thunderbird
 fi
 
 # Install Skype Action
 if [[ $GUI == *"Install Skype"* ]]
 then
-	clear
 	echo "Installing Skype..."
-	echo ""
 	if [[ $(uname -m) == "i686" ]]
 	then
 		wget -O /tmp/skype.deb https://download.skype.com/linux/skype-ubuntu-precise_4.3.0.37-1_i386.deb
@@ -294,9 +269,7 @@ fi
 # Install Dropbox Action
 if [[ $GUI == *"Install Dropbox"* ]]
 then
-	clear
 	echo "Installing Drobox..."
-	echo ""
 	installPackage git
 	sudo apt --purge remove -y dropbox*
 	installPackage python-gpgme
@@ -307,18 +280,14 @@ fi
 # Install Liferea Action
 if [[ $GUI == *"Install Liferea"* ]]
 then
-	clear
 	echo "Installing Liferea..."
-	echo ""
 	installPackage liferea
 fi
 
 # Install Go For It!
 if [[ $GUI == *"Install Go For It!"* ]]
 then
-	clear
 	echo "Installing Go For It!..."
-	echo ""
 	addRepository ppa:go-for-it-team/go-for-it-daily
 	installPackage go-for-it
 fi
@@ -326,63 +295,49 @@ fi
 # Install Klavaro Action
 if [[ $GUI == *"Install Klavaro"* ]]
 then
-	clear
 	echo "Installing Klavaro..."
-	echo ""
 	installPackage klavaro
 fi
 
 # Install VLC Action
 if [[ $GUI == *"Install VLC"* ]]
 then
-	clear
 	echo "Installing VLC..."
-	echo ""
 	installPackage vlc
 fi
 
 # Install Clementine Action
 if [[ $GUI == *"Install Clementine Music Player"* ]]
 then
-	clear
 	echo "Installing Clementine Music Player..."
-	echo ""
 	installPackage clementine
 fi
 
 # Install Gimp Action
 if [[ $GUI == *"Install Gimp"* ]]
 then
-	clear
 	echo "Installing Gimp Image Editor..."
-	echo ""
 	installPackage gimp
 fi
 
 # Install Deluge Action
 if [[ $GUI == *"Install Deluge"* ]]
 then
-	clear
 	echo "Installing Deluge..."
-	echo ""
 	installPackage deluge
 fi
 
 # Install Transmission Action
 if [[ $GUI == *"Install Transmission"* ]]
 then
-	clear
 	echo "Installing Transmission..."
-	echo ""
 	installPackage transmission
 fi
 
 # Install Atom Action
 if [[ $GUI == *"Install Atom"* ]]
 then
-	clear
 	echo "Installing Atom..."
-	echo ""
 	addRepository ppa:webupd8team/atom
 	installPackage atom
 fi
@@ -390,9 +345,7 @@ fi
 # Install Sublime Text 3 Action
 if [[ $GUI == *"Install Sublime Text 3"* ]]
 then
-	clear
 	echo "Installing Sublime Text 3..."
-	echo ""
   	addRepository ppa:webupd8team/sublime-text-3
 	installPackage sublime-text-installer
 fi
@@ -400,18 +353,14 @@ fi
 # Install LibreOffice Action
 if [[ $GUI == *"Install LibreOffice"* ]]
 then
-	clear
 	echo "Installing LibreOffice..."
-	echo ""
 	installPackage libreoffice
 fi
 
 # Install WPS Office
 if [[ $GUI == *"Install WPS Office"* ]]
 then
-	clear
 	echo "Installing WPS Office..."
-	echo ""
 	if [[ $(uname -m) == "i686" ]]
 	then
 		wget -O /tmp/wps-office_10.1.0.5672~a21_i386.deb http://kdl.cc.ksosoft.com/wps-community/download/a21/wps-office_10.1.0.5672~a21_i386.deb
@@ -434,7 +383,6 @@ fi
 if [[ $GUI == *"Install TLP"* ]]
 then
 	echo "Installing TLP..."
-	echo ""
 	sudo apt --purge remove -y laptop-mode-tools	#Avoid conflict with TLP
 	installPackage tlp
 	installPackage tlp-rdw
@@ -443,35 +391,28 @@ fi
 # Install Redshift Action
 if [[ $GUI == *"Install Redshift"* ]]
 then
-	clear
 	echo "Installing Redshift..."
-	echo ""
 	installPackage redshift-gtk
 fi
 
 # Install Gnome Disk Utility Action
 if [[ $GUI == *"Install Disk Utility"* ]]
 then
-	clear
 	echo "Installing Gnome Disk Utility..."
-	echo ""
 	installPackage gnome-disk-utility
 fi
 
 # Install Brasero Action
 if [[ $GUI == *"Install Brasero"* ]]
 then
-	clear
 	echo "Installing Brasero..."
-	echo ""
 	installPackage brasero
+fi
 
 # Install Spotify Action
 if [[ $GUI == *"Install Spotify"* ]]
 then
-	clear
 	echo "Installing Spotify..."
-	echo ""
 	sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
 	echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
 	sudo apt-get update
@@ -482,31 +423,24 @@ fi
 # Install Ubuntu Restricted Extras Action
 if [[ $GUI == *"Install Ubuntu Restricted Extras"* ]]
 then
-	clear
 	echo "Installing Ubuntu Restricted Extras..."
-	echo ""
 	installPackage ubuntu-restricted-extras
 fi
 
 # Fix Broken Packages Action
 if [[ $GUI == *"Fix Broken Packages"* ]]
 then
-	clear
 	echo "Fixing the broken packages..."
-	echo ""
 	sudo apt -y -f install
 fi
 
 # Clean-Up Junk Action
 if [[ $GUI == *"Clean-Up Junk"* ]]
 then
-	clear
 	echo "Cleaning-up junk..."
-	echo ""
 	sudo apt -y autoremove
 	sudo apt -y autoclean
 fi
-
 
 # Notification
 clear
