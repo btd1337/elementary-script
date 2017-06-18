@@ -27,7 +27,7 @@ Copy and paste the following line into a terminal window in order to run the scr
 
 ```bash
 sudo apt install git
-git clone https://github.com/btd1337/elementary-script
+git clone https://github.com/naaando/elementary-script
 cd elementary-script
 ./elementary-script.sh
 ```
@@ -35,10 +35,6 @@ cd elementary-script
 ## References
 
 [Diolinux](http://www.diolinux.com.br/2016/12/elementary-script-pos-instalacao.html)
-
-## Donate
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=X85LVKF3HYPZL&lc=US&item_name=btd1337&item_number=elementary%2dscript&currency_code=BRL&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
 ## License
 
