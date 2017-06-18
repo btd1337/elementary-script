@@ -78,7 +78,6 @@ function main() {
 		FALSE "Install Skype" "Video chat, make international calls, instant message and more with Skype." \
 		FALSE "Install Dropbox" "Installs Dropbox with wingpanel support. Dropbox is a free service that lets you bring your photos, docs, and videos anywhere and share them easily." \
 		FALSE "Install Liferea" "Installs Liferea. a web feed reader/news aggregator that brings together all of the content from your favorite subscriptions into a simple interface that makes it easy to organize and browse feeds. Its GUI is similar to a desktop mail/newsclient, with an embedded graphical browser." \
-		FALSE "Install Go For It!" "Go For It! is a simple and stylish productivity app, featuring a to-do list, merged with a timer that keeps your focus on the current task." \
 		FALSE "Install Klavaro" "Installs the Klavaro a free touch typing tutor program." \
 		FALSE "Install VLC" "Installs VLC. A free and open source cross-platform multimedia player and framework that plays most multimedia files as well as DVDs, Audio CDs, VCDs, and various streaming protocols." \
 		FALSE "Install Clementine Music Player" "Installs Clementine. One of the Best Music Players and library organizer on Linux." \
@@ -285,15 +284,6 @@ function parse_opt() {
 	then
 		echo "Installing Liferea..."
 		installPackage liferea
-	fi
-
-	# Install Go For It!
-	if [[ $opt == *"Install Go For It!"* ]]
-	then
-		echo "Installing Go For It!..."
-		# addRepository ppa:go-for-it-team/go-for-it-daily
-		# installPackage go-for-it
-		ppa_error_msg "Go for it"
 	fi
 
 	# Install Klavaro Action
