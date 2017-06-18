@@ -1,5 +1,9 @@
 #!/bin/bash
 
+zenity(){
+    /usr/bin/zenity "$@" 2>/dev/null
+}
+
 function installPackage() {
 		local name=$1
 		package=$(dpkg --get-selections | grep "$name" )
