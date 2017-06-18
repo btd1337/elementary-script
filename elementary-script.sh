@@ -1,6 +1,7 @@
 #!/bin/bash
 
 zenity(){
+	# Need to resolve 'GtkDialog mapped without a transient parent'
     /usr/bin/zenity "$@" 2>/dev/null
 }
 
