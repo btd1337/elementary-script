@@ -69,7 +69,6 @@ function main() {
 		FALSE "Install Elementary Full Icon Theme" "Installs Elementary Full Icon Theme. A mega pack of icons for elementary OS." \
 		FALSE "Add Oibaf Repository" "This repository contain updated and optimized open graphics drivers." \
 		FALSE "Install Gufw Firewall" "Gufw is an easy and intuitive way to manage your linux firewall." \
-		FALSE "Install Notes-up" "Aimed for elementary OS, notes-up is a virtual notebook manager were you can write your notes in markdown format." \
 		FALSE "Install Startup Disk Creator" "Startup Disk Creator converts a USB key or SD card into a volume from which you can start up and run OS Linux" \
 		FALSE "Install GDebi" "Installs GDebi. A simple tool to install deb files." \
 		FALSE "Install Google Chrome" "Installs Google Chrome 64bits. A browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier." \
@@ -186,15 +185,6 @@ function parse_opt() {
 	then
 		echo "Installing Gufw Firewall..."
 		installPackage gufw
-	fi
-
-	# Install Notes-up
-	if [[ $opt == *"Install Notes-up"* ]]
-	then
-		echo "Installing Notes-up..."
-		# addRepository ppa:philip.scott/notes-up
-		# installPackage notes-up
-		ppa_error_msg "Notes-up"
 	fi
 
 	# Install Startup Disk Creator
