@@ -68,6 +68,7 @@ function main() {
 		TRUE "Enable PPAs" "Another extra layer of security and another level of annoyance. You cannot add PPA by default in Loki." \
 		FALSE "Install Elementary Tweaks" "Installing themes in elementary OS is a much easier task thanks to elementary Tweaks tool." \
 		FALSE "Install Elementary Full Icon Theme" "Installs Elementary Full Icon Theme. A mega pack of icons for elementary OS." \
+		FALSE "Install Elementary X" "Original elementary theme with some tweaks and OS X window controls." \
 		FALSE "Install Support for Archive Formats" "Installs support for archive formats(.zip, .rar, .p7)." \
 		FALSE "Fix keyboard accents on latin keyboard" "Autostart ibus-daemon, you may want to check it if you're having issues with accents on Qt apps" \
 		FALSE "Add Oibaf Repository" "This repository contain updated and optimized open graphics drivers." \
@@ -147,14 +148,32 @@ function parse_opt() {
 		if [ -d "$directory" ];	#Verifying if directory exists
 		then
 			echo "The icon-pack already installed. They will be updated now..."
-	  	cd /usr/share/icons/elementary-full-icon-theme
-			git pull
+	  		cd /usr/share/icons/elementary-full-icon-theme
+			sudo git pull
 		else
 			echo "Installing Elementary Full Icon Theme..."
-			git clone https://github.com/btd1337/elementary-full-icon-theme
-			sudo mv elementary-full-icon-theme /usr/share/icons/
+			git clone https://github.com/btd1337/elementary-full-icon-theme /usr/share/icons/elementary-full-icon-theme
 		fi
 		gsettings set org.gnome.desktop.interface icon-theme "elementary-full-icon-theme"
+	fi
+
+	# Install Elementary x
+	if [[ $opt == *"Install Elementary X"* ]]
+	then
+		installPackage git
+
+		directory=/usr/share/themes/elementary-x
+		if [ -d "$directory" ];	#Verifying if directory exists
+		then
+			echo "The theme already installed. They will be updated now..."
+			cd /usr/share/
+			sudo git pull
+		else
+			echo "Installing elementary-x Theme..."
+			sudo git clone https://github.com/surajmandalcell/elementary-x.git /usr/share/themes/elementary-x
+		fi
+		gsettings set org.gnome.desktop.interface gtk-theme 'elementary-x'
+		echo "For enable minimize button, install Elementary Tweaks. After go to System Settings > Elementary Tweaks > Button Layout: OS X and enjoy..."
 	fi
 
 	# Install Support for Archive Formats Action
@@ -378,11 +397,11 @@ function parse_opt() {
 		echo "Installing WPS Office..."
 		if [[ $(uname -m) == "i686" ]]
 		then
-			wget -O /tmp/wps-office_10.1.0.5672~a21_i386.deb http://kdl.cc.ksosoft.com/wps-community/download/a21/wps-office_10.1.0.5672~a21_i386.deb
+			wget -O /tmp/wps-office_10.1.0.5672~a21_i386.deb http://kdl1.cache.wps.com/ksodl/download/linux/a21//wps-office_10.1.0.5707~a21_i386.deb
 			sudo dpkg -i /tmp/wps-office_10.1.0.5672~a21_i386.deb
 		elif [[ $(uname -m) == "x86_64" ]]
 		then
-			wget -O /tmp/wps-office_10.1.0.5672~a21_amd64.deb http://kdl.cc.ksosoft.com/wps-community/download/a21/wps-office_10.1.0.5672~a21_amd64.deb
+			wget -O /tmp/wps-office_10.1.0.5672~a21_amd64.deb http://kdl1.cache.wps.com/ksodl/download/linux/a21//wps-office_10.1.0.5707~a21_amd64.deb
 			sudo dpkg -i /tmp/wps-office_10.1.0.5672~a21_amd64.deb
 		fi
 		#Fonts, Interface Translate, Dictionary
