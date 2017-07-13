@@ -67,7 +67,7 @@ function main() {
 		TRUE "Update System" "Updates the package lists, the system packages and Applications."  \
 		TRUE "Enable PPAs" "Another extra layer of security and another level of annoyance. You cannot add PPA by default in Loki." \
 		FALSE "Install Elementary Tweaks" "Installing themes in elementary OS is a much easier task thanks to elementary Tweaks tool." \
-		FALSE "Install Elementary Full Icon Theme" "Installs Elementary Full Icon Theme. A mega pack of icons for elementary OS." \
+		FALSE "Install Urutau Icons" "A mega pack of icons for elementary OS." \
 		FALSE "Install Elementary X" "Original elementary theme with some tweaks and OS X window controls." \
 		FALSE "Install Support for Archive Formats" "Installs support for archive formats(.zip, .rar, .p7)." \
 		FALSE "Fix keyboard accents on latin keyboard" "Autostart ibus-daemon, you may want to check it if you're having issues with accents on Qt apps" \
@@ -140,21 +140,21 @@ function parse_opt() {
 	fi
 
 	# Install  Elementary Full Icon Theme
-	if [[ $opt == *"Install Elementary Full Icon Theme"* ]]
+	if [[ $opt == *"Install Urutau Icons"* ]]
 	then
 		installPackage git
 
-		directory=/usr/share/icons/elementary-full-icon-theme
+		directory=/usr/share/icons/urutau-icons
 		if [ -d "$directory" ];	#Verifying if directory exists
 		then
 			echo "The icon-pack already installed. They will be updated now..."
-	  		cd /usr/share/icons/elementary-full-icon-theme
+	  		cd /usr/share/icons/urutau-icons
 			sudo git pull
 		else
-			echo "Installing Elementary Full Icon Theme..."
-			git clone https://github.com/btd1337/elementary-full-icon-theme /usr/share/icons/elementary-full-icon-theme
+			echo "Installing Urutau Icons..."
+			sudo git clone https://github.com/btd1337/urutau-icons /usr/share/icons/urutau-icons
 		fi
-		gsettings set org.gnome.desktop.interface icon-theme "elementary-full-icon-theme"
+		gsettings set org.gnome.desktop.interface icon-theme "urutau-icons"
 	fi
 
 	# Install Elementary x
