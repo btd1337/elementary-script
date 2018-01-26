@@ -2,7 +2,7 @@
 
 A tiny script that helps you perform necessary tasks after you install elementary OS or others Ubuntu based systems.
 
-![Screenshot](https://raw.githubusercontent.com/btd1337/elementary-script/master/Screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/btd1337/elementary-script/master/screenshot.jpeg)
 
 ## OS Version Compatibility
 

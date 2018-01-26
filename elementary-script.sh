@@ -67,33 +67,33 @@ function main() {
 		TRUE "Update System" "Updates the package lists, the system packages and Applications."  \
 		TRUE "Enable PPAs" "Another extra layer of security and another level of annoyance. You cannot add PPA by default in Loki." \
 		FALSE "Install Elementary Tweaks" "Installing themes in elementary OS is a much easier task thanks to elementary Tweaks tool." \
-		FALSE "Install Urutau Icons" "A mega pack of icons for elementary OS." \
+		FALSE "Install Urutau Icons" "A package of icons that transforms the third-party icons with the elementary appearance." \
 		FALSE "Install Elementary X" "Original elementary theme with some tweaks and OS X window controls." \
+		FALSE "Install Brave Browser" "Browse faster by blocking ads and trackers that violate your privacy and cost you time and money." \
+		FALSE "Install Chromium" "An open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web." \
+		FALSE "Install Firefox" "A free and open-source web browser." \
+		FALSE "Install Google Chrome" "A browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier." \
+		FALSE "Install Opera" "Fast, secure, easy-to-use browser" \
 		FALSE "Install Support for Archive Formats" "Installs support for archive formats(.zip, .rar, .p7)." \
 		FALSE "Fix keyboard accents on latin keyboard" "Autostart ibus-daemon, you may want to check it if you're having issues with accents on Qt apps" \
 		FALSE "Add Oibaf Repository" "This repository contain updated and optimized open graphics drivers." \
 		FALSE "Install Gufw Firewall" "Gufw is an easy and intuitive way to manage your linux firewall." \
-		FALSE "Install Notes-up" "Aimed for elementary OS, notes-up is a virtual notebook manager were you can write your notes in markdown format." \
 		FALSE "Install Startup Disk Creator" "Startup Disk Creator converts a USB key or SD card into a volume from which you can start up and run OS Linux" \
 		FALSE "Install GDebi" "Installs GDebi. A simple tool to install deb files." \
-		FALSE "Install Google Chrome" "Installs Google Chrome 64bits. A browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier." \
-		FALSE "Install Chromium" "Installs Chromium. An open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web." \
-		FALSE "Install Opera" "Installs Opera. Fast, secure, easy-to-use browser" \
-		FALSE "Install Firefox" "Installs Firefox. A free and open-source web browser." \
 		FALSE "Install Skype" "Video chat, make international calls, instant message and more with Skype." \
 		FALSE "Install Dropbox" "Installs Dropbox with wingpanel support. Dropbox is a free service that lets you bring your photos, docs, and videos anywhere and share them easily." \
-		FALSE "Install Liferea" "Installs Liferea. a web feed reader/news aggregator that brings together all of the content from your favorite subscriptions into a simple interface that makes it easy to organize and browse feeds. Its GUI is similar to a desktop mail/newsclient, with an embedded graphical browser." \
-		FALSE "Install Go For It!" "Go For It! is a simple and stylish productivity app, featuring a to-do list, merged with a timer that keeps your focus on the current task." \
-		FALSE "Install Klavaro" "Installs the Klavaro a free touch typing tutor program." \
-		FALSE "Install VLC" "Installs VLC. A free and open source cross-platform multimedia player and framework that plays most multimedia files as well as DVDs, Audio CDs, VCDs, and various streaming protocols." \
-		FALSE "Install Clementine Music Player" "Installs Clementine. One of the Best Music Players and library organizer on Linux." \
+		FALSE "Install Liferea" "A web feed reader/news aggregator that brings together all of the content from your favorite subscriptions into a simple interface that makes it easy to organize and browse feeds. Its GUI is similar to a desktop mail/newsclient, with an embedded graphical browser." \
+		FALSE "Install Klavaro" "Klavaro it's a free touch typing tutor program." \
+		FALSE "Install VLC" "A free and open source cross-platform multimedia player and framework that plays most multimedia files as well as DVDs, Audio CDs, VCDs, and various streaming protocols." \
+		FALSE "Install Clementine Music Player" "One of the Best Music Players and library organizer on Linux." \
 		FALSE "Install Gimp" "GIMP is an advanced picture editor. You can use it to edit, enhance, and retouch photos and scans, create drawings, and make your own images." \
 		FALSE "Install Deluge" "Deluge is a lightweight, Free Software, cross-platform BitTorrent client." \
 		FALSE "Install Transmission" "Installs the Transmission BitTorrent client." \
-		FALSE "Install Atom" "Installs Atom. A hackable text editor for the 21st Century." \
-		FALSE "Install Sublime Text 3" "Installs Sublime Text 3. A sophisticated text editor for code, markup and prose." \
-		FALSE "Install LibreOffice" "Installs LibreOffice. A powerful office suite." \
-		FALSE "Install WPS Office" "Installs WPS Office. The most compatible free office suite." \
+		FALSE "Install Atom" "A hackable text editor for the 21st Century." \
+		FALSE "Install Sublime Text 3" "A sophisticated text editor for code, markup and prose." \
+		FALSE "Install VS Code" "Visual Studio Code is a code editor redefined and optimized for building and debugging modern web and cloud applications." \
+		FALSE "Install LibreOffice" "A powerful office suite." \
+		FALSE "Install WPS Office" "The most compatible free office suite." \
 		FALSE "Install TLP" "Install TLP to save battery and prevent overheating." \
 		FALSE "Install Redshift" "Use night shift to save your eyes." \
 		FALSE "Install Disk Utility" "Gnome Disk Utility is a tool to manage disk drives and media." \
@@ -139,7 +139,7 @@ function parse_opt() {
 		ppa_error_msg "Elementary Tweaks"
 	fi
 
-	# Install  Elementary Full Icon Theme
+	# Install  Urutau Icons
 	if [[ $opt == *"Install Urutau Icons"* ]]
 	then
 		installPackage git
@@ -153,6 +153,14 @@ function parse_opt() {
 		else
 			echo "Installing Urutau Icons..."
 			sudo git clone https://github.com/btd1337/urutau-icons /usr/share/icons/urutau-icons
+			git clone https://github.com/btd1337/urutau-icons-app ~/urutau-icons-app
+			cd ~/urutau-icons-app
+			mkdir build && cd build
+			cmake -DCMAKE_INSTALL_PREFIX=/usr ../
+			make
+			sudo make install
+			cd
+			rm -R ~/urutau-icons-app
 		fi
 		gsettings set org.gnome.desktop.interface icon-theme "urutau-icons"
 	fi
@@ -174,6 +182,54 @@ function parse_opt() {
 		fi
 		gsettings set org.gnome.desktop.interface gtk-theme 'elementary-x'
 		echo "For enable minimize button, install Elementary Tweaks. After go to System Settings > Elementary Tweaks > Button Layout: OS X and enjoy..."
+	fi
+
+	# Install Brave Browser
+	if [[ $opt == *"Install Brave Browser"* ]]
+	then
+		echo "Installing Brave Browser..."
+		if [[ $(uname -m) == "i686" ]]
+		then
+			echo "Brave Browser does not support 32 bits"
+		elif [[ $(uname -m) == "x86_64" ]]
+		then
+			curl https://s3-us-west-2.amazonaws.com/brave-apt/keys.asc | sudo apt-key add -
+			echo "deb [arch=amd64] https://s3-us-west-2.amazonaws.com/brave-apt `lsb_release -sc` main" | sudo tee -a /etc/apt/sources.list.d/brave-`lsb_release -sc`.list
+			sudo apt update
+			installPackage brave
+		fi
+	fi
+
+	# Install Chromium
+	if [[ $opt == *"Install Chromium"* ]]
+	then
+		echo "Installing Chromium..."
+		installPackage chromium-browser
+	fi
+
+	# Install Firefox
+	if [[ $opt == *"Install Firefox"* ]]
+	then
+		echo "Installing Firefox..."
+		installPackage firefox
+	fi
+
+	# Install Google Chrome
+	if [[ $opt == *"Install Google Chrome"* ]]
+	then
+		echo "Installing Google Chrome..."
+		wget -O /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+		sudo dpkg -i /tmp/google-chrome-stable_current_amd64.deb
+	fi
+
+	# Install Opera
+	if [[ $opt == *"Install Opera"* ]]
+	then
+		echo "Installing Opera..."
+		sudo add-apt-repository 'deb https://deb.opera.com/opera-stable/ stable non-free' -y
+		wget -qO- https://deb.opera.com/archive.key | sudo apt-key add -
+		sudo apt update
+		installPackage opera-stable
 	fi
 
 	# Install Support for Archive Formats Action
@@ -218,15 +274,6 @@ function parse_opt() {
 		installPackage gufw
 	fi
 
-	# Install Notes-up
-	if [[ $opt == *"Install Notes-up"* ]]
-	then
-		echo "Installing Notes-up..."
-		addRepository ppa:philip.scott/notes-up
-		installPackage notes-up
-		ppa_error_msg "Notes-up"
-	fi
-
 	# Install Startup Disk Creator
 	if [[ $opt == *"Install Startup Disk Creator"* ]]
 	then
@@ -241,38 +288,6 @@ function parse_opt() {
 		installPackage gdebi
 	fi
 
-	# Install Google Chrome Action
-	if [[ $opt == *"Install Google Chrome"* ]]
-	then
-		echo "Installing Google Chrome..."
-		wget -O /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-		sudo dpkg -i /tmp/google-chrome-stable_current_amd64.deb
-	fi
-
-	# Install Chromium
-	if [[ $opt == *"Install Chromium"* ]]
-	then
-		echo "Installing Chromium..."
-		installPackage chromium-browser
-	fi
-
-	# Install Opera
-	if [[ $opt == *"Install Opera"* ]]
-	then
-		echo "Installing Opera..."
-		sudo add-apt-repository 'deb https://deb.opera.com/opera-stable/ stable non-free' -y
-		wget -qO- https://deb.opera.com/archive.key | sudo apt-key add -
-		sudo apt update
-		installPackage opera-stable
-	fi
-
-	# Install Firefox Action
-	if [[ $opt == *"Install Firefox"* ]]
-	then
-		echo "Installing Firefox..."
-		installPackage firefox
-	fi
-
 	# Install Thunderbird Action
 	if [[ $opt == *"Replace Pantheon Mail by the Thunderbird Mail"* ]]
 	then
@@ -282,18 +297,22 @@ function parse_opt() {
 		installPackage thunderbird
 	fi
 
-	# Install Skype Action
+	# Install Skype
 	if [[ $opt == *"Install Skype"* ]]
 	then
 		echo "Installing Skype..."
 		if [[ $(uname -m) == "i686" ]]
 		then
 			wget -O /tmp/skype.deb https://download.skype.com/linux/skype-ubuntu-precise_4.3.0.37-1_i386.deb
+			sudo dpkg -i /tmp/skype.deb
 		elif [[ $(uname -m) == "x86_64" ]]
 		then
-			wget -O /tmp/skype.deb https://go.skype.com/skypeforlinux-64-alpha.deb
-		fi
-		sudo dpkg -i /tmp/skype.deb
+			installPackage apt-transport-https
+			wget -q -O - https://repo.skype.com/data/SKYPE-GPG-KEY | sudo apt-key add -
+			echo "deb https://repo.skype.com/deb stable main" | sudo tee /etc/apt/sources.list.d/skypeforlinux.list
+			sudo apt update
+			installPackage skypeforlinux
+		fi		
 		sudo apt -f install -y
 	fi
 
@@ -313,15 +332,6 @@ function parse_opt() {
 	then
 		echo "Installing Liferea..."
 		installPackage liferea
-	fi
-
-	# Install Go For It!
-	if [[ $opt == *"Install Go For It!"* ]]
-	then
-		echo "Installing Go For It!..."
-		addRepository ppa:go-for-it-team/go-for-it-daily
-		installPackage go-for-it
-		ppa_error_msg "Go for it"
 	fi
 
 	# Install Klavaro Action
@@ -379,9 +389,28 @@ function parse_opt() {
 	if [[ $opt == *"Install Sublime Text 3"* ]]
 	then
 		echo "Installing Sublime Text 3..."
-	  addRepository ppa:webupd8team/sublime-text-3
+	  	addRepository ppa:webupd8team/sublime-text-3
 		installPackage sublime-text-installer
 		ppa_error_msg "Sublime Text 3"
+	fi
+
+	# Install VS Code Action
+	if [[ $opt == *"Install VS Code"* ]]
+	then
+		echo "Installing VS Code..."
+		if [[ $(uname -m) == "i686" ]]
+		then
+			wget -O /tmp/vscode.deb https://go.microsoft.com/fwlink/?LinkID=760680
+			sudo dpkg -i /tmp/vscode.deb
+			sudo apt install -f
+		elif [[ $(uname -m) == "x86_64" ]]
+		then
+			sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+			curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+			sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+			sudo apt update
+			installPackage code
+		fi
 	fi
 
 	# Install LibreOffice Action
@@ -397,20 +426,21 @@ function parse_opt() {
 		echo "Installing WPS Office..."
 		if [[ $(uname -m) == "i686" ]]
 		then
-			wget -O /tmp/wps-office_10.1.0.5672~a21_i386.deb http://kdl1.cache.wps.com/ksodl/download/linux/a21//wps-office_10.1.0.5707~a21_i386.deb
-			sudo dpkg -i /tmp/wps-office_10.1.0.5672~a21_i386.deb
+			wget -O /tmp/wps-office.deb http://kdl1.cache.wps.com/ksodl/download/linux/a21//wps-office_10.1.0.5707~a21_i386.deb
+			sudo dpkg -i /tmp/wps-office.deb
 		elif [[ $(uname -m) == "x86_64" ]]
 		then
-			wget -O /tmp/wps-office_10.1.0.5672~a21_amd64.deb http://kdl1.cache.wps.com/ksodl/download/linux/a21//wps-office_10.1.0.5707~a21_amd64.deb
-			sudo dpkg -i /tmp/wps-office_10.1.0.5672~a21_amd64.deb
+			wget -O /tmp/wps-office.deb http://kdl1.cache.wps.com/ksodl/download/linux/a21//wps-office_10.1.0.5707~a21_amd64.deb
+			sudo dpkg -i /tmp/wps-office.deb
 		fi
 		#Fonts, Interface Translate, Dictionary
-		wget -O /tmp/wps-office-fonts_1.0_all.deb http://kdl.cc.ksosoft.com/wps-community/download/fonts/wps-office-fonts_1.0_all.deb
-		wget -O /tmp/wps-office-ul_10.1.0.5503-0kaiana05052016_all.deb http://repo.uniaolivre.com/packages/xenial/wps-office-ul_10.1.0.5503-0kaiana05052016_all.deb
-		wget -O /tmp/wps-office-language-all_0.1_all.deb https://doc-0k-5g-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/vmsics07sveefmft458910ml3prvahpt/1480881600000/05316569172087402966/*/0B7HGeEB4kyvMaU5SbkdRRjBYWHc?e=download
-		sudo dpkg -i /tmp/wps-office-fonts_1.0_all.deb
-		sudo dpkg -i /tmp/wps-office-ul_10.1.0.5503-0kaiana05052016_all.deb
-		sudo dpkg -i /tmp/wps-office-language-all_0.1_all.deb
+		wget -O /tmp/wps-office-fonts.deb http://kdl.cc.ksosoft.com/wps-community/download/fonts/wps-office-fonts_1.0_all.deb
+		wget -O /tmp/wps-office-ul.deb http://repo.uniaolivre.com/packages/xenial/wps-office-ul_10.1.0.5503-0kaiana05052016_all.deb
+		wget -O /tmp/wps-office-language-all.deb https://raw.githubusercontent.com/btd1337/elementary-script/master/files/wps-office-language-all_0.1_all.deb
+		sudo dpkg -i /tmp/wps-office-fonts.deb
+		sudo dpkg -i /tmp/wps-office-ul.deb
+		sudo dpkg -i /tmp/wps-office-language-all.deb
+		sudo apt -y -f install
 	fi
 
 	# Install TLP
