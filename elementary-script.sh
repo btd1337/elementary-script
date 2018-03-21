@@ -32,10 +32,6 @@ function error_msg() {
 	zenity --error --text="${1}" --ellipsize
 }
 
-function ppa_error_msg() {
-	error_msg "The package $1 couldn't be installed\nWe disabled any package that use ppa's for now."
-}
-
 function not_implemented_error_msg() {
 	error_msg "This action($1) wasn't implemented yet."
 }
@@ -136,7 +132,6 @@ function parse_opt() {
 		echo "Installing Elementary Tweaks..."
 		addRepository ppa:philip.scott/elementary-tweaks
 		installPackage elementary-tweaks
-		ppa_error_msg "Elementary Tweaks"
 	fi
 
 	# Install  Urutau Icons
@@ -261,10 +256,9 @@ function parse_opt() {
 	# Add Oibaf Repository
 	if [[ $opt == *"Add Oibaf Repository"* ]]
 	then
-		# echo "Adding Oibaf Repository and updating..."
+		echo "Adding Oibaf Repository and updating..."
 		addRepository ppa:oibaf/graphics-drivers
-		# sudo apt -y full-upgrade
-		ppa_error_msg "Oibaf"
+		sudo apt -y full-upgrade
 	fi
 
 	# Install Gufw Firewall Action
@@ -382,7 +376,6 @@ function parse_opt() {
 		echo "Installing Atom..."
 		addRepository ppa:webupd8team/atom
 		installPackage atom
-		ppa_error_msg "Atom"
 	fi
 
 	# Install Sublime Text 3 Action
@@ -391,7 +384,6 @@ function parse_opt() {
 		echo "Installing Sublime Text 3..."
 	  	addRepository ppa:webupd8team/sublime-text-3
 		installPackage sublime-text-installer
-		ppa_error_msg "Sublime Text 3"
 	fi
 
 	# Install VS Code Action
