@@ -42,7 +42,7 @@ cd elementary-script
 ## Did you find a problem?
 <dl>
     <dt>Report here</dt>
-    <dd>[Support](https://github.com/btd1337/elementary-script/issues)<dd>
+    <dd>[Support](https://github.com/btd1337/elementary-script/issues)</dd>
 </dl>
 
 ## Donate
