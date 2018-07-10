@@ -11,18 +11,18 @@ This script will support the lastest stable version of:
 
 ## Run
 
-#### with curl
+### Method 1 | With curl
 
 ```shell
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/btd1337/elementary-script/master/elementary-script.sh)"
 ```
 
-#### with wget
+### Method 2 | With wget
 
 ```shell
 bash -c "$(wget https://raw.githubusercontent.com/btd1337/elementary-script/master/elementary-script.sh -O -)"
 ```
-#### Cloning git
+### Method 3 | With git
 
 Copy and paste the following line into a terminal window in order to run the script.
 
