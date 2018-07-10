@@ -3,6 +3,9 @@ description:
 google_analytics:
 show_downloads: true
 theme: jekyll-theme-midnight
+github:
+  zip_url: https://github.com/btd1337/elementary-script/zipball/master
+  tar_url: https://github.com/btd1337/elementary-script/tarball/master
 
 gems:
   - jekyll-mentions
