@@ -2,7 +2,7 @@ title: Elementary-script
 description: A tiny script that helps you perform necessary tasks after you install elementary OS.
 google_analytics: 
 show_downloads: true
-theme: jekyll-theme-midnight
+theme: jekyll-theme-hacker
 
 gems:
   - jekyll-mentions
