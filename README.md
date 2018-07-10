@@ -6,7 +6,7 @@ A tiny script that helps you perform necessary tasks after you install elementar
 
 ## OS Version Compatibility
 
-elementary-script will always support the lastest stable version of elementary OS, which at the moment is **elementary OS 0.4 Loki** and others Ubuntu based systems.
+elementary-script will always support the lastest stable version of elementary OS, which at the moment is **elementary OS 0.4 Loki** and others Ubuntu based systems as Linux Mint and Ubuntu.
 
 ## Run
 
