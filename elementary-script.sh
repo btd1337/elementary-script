@@ -1,42 +1,77 @@
 #!/bin/bash
 
+# Script checked by https://www.shellcheck.net/
+
 zenity(){
 	# Need to resolve 'GtkDialog mapped without a transient parent'
     /usr/bin/zenity "$@" 2>/dev/null
 }
 
+function checkUbuntuCodename() {
+	elementary_codename=$(lsb_release -sc)
+	case $elementary_codename in
+		"juno") ubuntu_codename="bionic" ;;
+		"loki") ubuntu_codename="xenial" ;;
+		"freya") ubuntu_codename="trusty" ;;
+	*) echo "Sorry, invalid elementaryOS version!";;
+esac
+}
+
 function installPackage() {
 		local name=$1
+		local package
 		package=$(dpkg --get-selections | grep "$name" )
-		echo "Verifying that the $name package is installed."
+		echo "Verifying that the $name package is already installed."
 		echo "$package"
 		if [ -n "$package" ] ;
 		then echo
-		     echo "Package $name is already installed."
+		     printf "Package %s is already installed.\\n" "$name"
 		else echo
 		     echo "Package $name required-> Not installed"
 		     echo "Automatically installing the package..."
-		     sudo apt -y install $name
+		     sudo apt -y install "$name"
 		fi
 }
 
 function addRepository() {
-	repository=$1
-	sudo apt-add-repository -r $repository -y    #remove if already installed
-	sudo apt update
-	sudo add-apt-repository -y $repository
-	sudo apt update
+	local repository=$1
+	local ppa="ppa:${repository}"
+
+	if ! grep -q "^deb .*$repository" /etc/apt/sources.list /etc/apt/sources.list.d/*; 
+	then
+		installPackage software-properties-common	# it's necessary to add ppas
+
+		addRepositoryMessage "${ppa}"
+		sudo add-apt-repository -y "$ppa"
+		sleep 5  # Waits 5 seconds.
+		sudo apt update
+	fi
 }
 
-function error_msg() {
+function addRepositoryMessage() {
+	local repository=$1
+	printf "Adding Repository %s\\n\\n" "$repository"
+}
+
+function printMessage() {
+	local msg=$1
+
+	printf "\\n\\n====================\\t%s    ===================\\n\\n" "${msg}"
+	notify-send -i utilities-terminal elementary-script "${msg}"
+}
+
+function errorMessage() {
 	zenity --error --text="${1}" --ellipsize
 }
 
-function not_implemented_error_msg() {
-	error_msg "This action($1) wasn't implemented yet."
+function notImplementedErrorMessage() {
+	errorMessage "This action($1) wasn't implemented yet."
 }
 
 function main() {
+	clear
+	checkUbuntuCodename
+
 	#Install x11-utils, we need xwininfo for auto adjust window
 	installPackage x11-utils
 
@@ -49,8 +84,8 @@ function main() {
 	SCREEN_HEIGHT=$(xwininfo -root | awk '$1=="Height:" {print $2}')
 
 	# new width and height
-	W=$(( $SCREEN_WIDTH / 1 - $RIGHTMARGIN ))
-	H=$(( $SCREEN_HEIGHT - 2 * $TOPMARGIN ))
+	W=$(( SCREEN_WIDTH / 1 - RIGHTMARGIN ))
+	H=$(( SCREEN_HEIGHT - 2 * TOPMARGIN ))
 
 	# Zenity
 	GUI=$(zenity --list --checklist \
@@ -63,7 +98,7 @@ function main() {
 		TRUE "Update System" "Updates the package lists, the system packages and Applications."  \
 		TRUE "Enable PPAs" "Another extra layer of security and another level of annoyance. You cannot add PPA by default in Loki." \
 		FALSE "Install Elementary Tweaks" "Installing themes in elementary OS is a much easier task thanks to elementary Tweaks tool." \
-		FALSE "Install Urutau Icons" "A package of icons that transforms the third-party icons with the elementary appearance." \
+		FALSE "Install Urutau Icons" "The most complete package of icons for third-party applications with elementary OS design" \
 		FALSE "Install Elementary X" "Original elementary theme with some tweaks and OS X window controls." \
 		FALSE "Install Brave Browser" "Browse faster by blocking ads and trackers that violate your privacy and cost you time and money." \
 		FALSE "Install Chromium" "An open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web." \
@@ -71,7 +106,7 @@ function main() {
 		FALSE "Install Google Chrome" "A browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier." \
 		FALSE "Install Opera" "Fast, secure, easy-to-use browser" \
 		FALSE "Install Support for Archive Formats" "Installs support for archive formats(.zip, .rar, .p7)." \
-		FALSE "Fix keyboard accents on latin keyboard" "Autostart ibus-daemon, you may want to check it if you're having issues with accents on Qt apps" \
+		FALSE "Fix keyboard accents on latin keyboard" "Autostart ibus-daemon, you may want to check it if you're having issues with accents on Qt apps (Telegram, WPS Office, ...)" \
 		FALSE "Add Oibaf Repository" "This repository contain updated and optimized open graphics drivers." \
 		FALSE "Install Gufw Firewall" "Gufw is an easy and intuitive way to manage your linux firewall." \
 		FALSE "Install Startup Disk Creator" "Startup Disk Creator converts a USB key or SD card into a volume from which you can start up and run OS Linux" \
@@ -96,13 +131,15 @@ function main() {
 		FALSE "Install Brasero" "A CD/DVD burning application for Linux" \
 		FALSE "Install Spotify" "A desktop software to listen music by streaming with the possibility to create and share playlists.." \
 		FALSE "Install Ubuntu Restricted Extras" "Installs commonly used applications with restricted copyright (mp3, avi, mpeg, TrueType, Java, Flash, Codecs)." \
-		FALSE "Fix Broken Packages" "Fixes the broken packages." \
-		FALSE "Clean-Up Junk" "Removes unnecessary packages and the local repository of retrieved package files." \
+		FALSE "Intall Grub Customizer" "Grub Customizer is a graphical tool for managing the Grub boot entries" \
+		TRUE "Fix Broken Packages" "Fixes the broken packages." \
+		TRUE "Clean-Up Junk" "Removes unnecessary packages and the local repository of retrieved package files." \
 		--separator=', ');
 
-		if ( parse_opt $GUI ); then
+		if ( parse_opt "$GUI" ); then
 			# Notification
-			notify-send -i utilities-terminal elementary-script "All tasks ran successfully!"
+			printf "\\n\\nAll tasks ran successfully!\\n\\nDiscover more native applications for elementary OS at: https://github.com/kleinrein/awesome-elementaryos\\n\\n"
+			notify-send -i utilities-terminal elementary-script "All tasks ran successfully!\\n\\nDiscover more native applications for elementary OS at:\\n\\nhttps://github.com/kleinrein/awesome-elementaryos"
 		else
 			return 1
 		fi
@@ -114,23 +151,24 @@ function parse_opt() {
 	# Update System Action
 	if [[ $opt == *"Update System"* ]]
 	then
-		echo "Updating system..."
+		printMessage "Updating System"
 		sudo apt -y update
 		sudo apt -y full-upgrade
+		sleep 5  # Waits 5 seconds.
 	fi
 
 	# Enable PPAs
 	if [[ $opt == *"Enable PPAs"* ]]
 	then
-		echo "Enabling PPAs..."
+		printMessage "Enabling PPAs"
 		installPackage software-properties-common
 	fi
 
 	# Install Elementary Tweaks Action
 	if [[ $opt == *"Install Elementary Tweaks"* ]]
 	then
-		echo "Installing Elementary Tweaks..."
-		addRepository ppa:philip.scott/elementary-tweaks
+		printMessage "Installing Elementary Tweaks"
+		addRepository philip.scott/elementary-tweaks
 		installPackage elementary-tweaks
 	fi
 
@@ -142,20 +180,12 @@ function parse_opt() {
 		directory=/usr/share/icons/urutau-icons
 		if [ -d "$directory" ];	#Verifying if directory exists
 		then
-			echo "The icon-pack already installed. They will be updated now..."
-	  		cd /usr/share/icons/urutau-icons
+			printMessage "The icon-pack already installed. They will be updated now"
+	  		cd /usr/share/icons/urutau-icons || exit
 			sudo git pull
 		else
-			echo "Installing Urutau Icons..."
+			printMessage "Installing Urutau Icons"
 			sudo git clone https://github.com/btd1337/urutau-icons /usr/share/icons/urutau-icons
-			git clone https://github.com/btd1337/urutau-icons-app ~/urutau-icons-app
-			cd ~/urutau-icons-app
-			mkdir build && cd build
-			cmake -DCMAKE_INSTALL_PREFIX=/usr ../
-			make
-			sudo make install
-			cd
-			rm -R ~/urutau-icons-app
 		fi
 		gsettings set org.gnome.desktop.interface icon-theme "urutau-icons"
 	fi
@@ -168,29 +198,36 @@ function parse_opt() {
 		directory=/usr/share/themes/elementary-x
 		if [ -d "$directory" ];	#Verifying if directory exists
 		then
-			echo "The theme already installed. They will be updated now..."
-			cd /usr/share/
+			printMessage "The theme already installed. They will be updated now"
+			cd $directory || exit
 			sudo git pull
 		else
-			echo "Installing elementary-x Theme..."
+			printMessage "Installing elementary-x Theme"
 			sudo git clone https://github.com/surajmandalcell/elementary-x.git /usr/share/themes/elementary-x
 		fi
 		gsettings set org.gnome.desktop.interface gtk-theme 'elementary-x'
-		echo "For enable minimize button, install Elementary Tweaks. After go to System Settings > Elementary Tweaks > Button Layout: OS X and enjoy..."
+		printMessage "For enable minimize button, install Elementary Tweaks. After go to System Settings > Elementary Tweaks > Button Layout: OS X and enjoy"
 	fi
 
 	# Install Brave Browser
 	if [[ $opt == *"Install Brave Browser"* ]]
 	then
-		echo "Installing Brave Browser..."
+		printMessage "Installing Brave Browser"
 		if [[ $(uname -m) == "i686" ]]
 		then
-			echo "Brave Browser does not support 32 bits"
+			printMessage "Brave Browser does not support 32 bits" 
 		elif [[ $(uname -m) == "x86_64" ]]
 		then
-			curl https://s3-us-west-2.amazonaws.com/brave-apt/keys.asc | sudo apt-key add -
-			echo "deb [arch=amd64] https://s3-us-west-2.amazonaws.com/brave-apt `lsb_release -sc` main" | sudo tee -a /etc/apt/sources.list.d/brave-`lsb_release -sc`.list
-			sudo apt update
+			local repository="brave-${ubuntu_codename}"
+
+			if [ ! -e /etc/apt/sources.list.d/${repository}.list ] 
+			then
+				addRepositoryMessage "${repository}"
+				curl https://s3-us-west-2.amazonaws.com/brave-apt/keys.asc | sudo apt-key add -
+				echo "deb [arch=amd64] https://s3-us-west-2.amazonaws.com/brave-apt ${ubuntu_codename} main" | sudo tee -a /etc/apt/sources.list.d/brave-${ubuntu_codename}.list
+				sleep 5 # Waits 5 seconds
+				sudo apt update
+			fi
 			installPackage brave
 		fi
 	fi
@@ -198,21 +235,21 @@ function parse_opt() {
 	# Install Chromium
 	if [[ $opt == *"Install Chromium"* ]]
 	then
-		echo "Installing Chromium..."
+		printMessage "Installing Chromium"
 		installPackage chromium-browser
 	fi
 
 	# Install Firefox
 	if [[ $opt == *"Install Firefox"* ]]
 	then
-		echo "Installing Firefox..."
+		printMessage "Installing Firefox"
 		installPackage firefox
 	fi
 
 	# Install Google Chrome
 	if [[ $opt == *"Install Google Chrome"* ]]
 	then
-		echo "Installing Google Chrome..."
+		printMessage "Installing Google Chrome" 
 		wget -O /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 		sudo dpkg -i /tmp/google-chrome-stable_current_amd64.deb
 	fi
@@ -220,17 +257,26 @@ function parse_opt() {
 	# Install Opera
 	if [[ $opt == *"Install Opera"* ]]
 	then
-		echo "Installing Opera..."
-		sudo add-apt-repository 'deb https://deb.opera.com/opera-stable/ stable non-free' -y
-		wget -qO- https://deb.opera.com/archive.key | sudo apt-key add -
-		sudo apt update
+		printMessage "Installing Opera"
+		
+		local repository="opera-stable"
+
+		if [ ! -e /etc/apt/sources.list.d/${repository}.list ] 
+		then
+			addRepositoryMessage $repository
+
+			wget -qO- https://deb.opera.com/archive.key | sudo apt-key add -
+			sudo add-apt-repository 'deb https://deb.opera.com/opera-stable/ stable non-free' -y
+			sleep 5 # Waits 5 seconds
+			sudo apt update
+		fi
 		installPackage opera-stable
 	fi
 
 	# Install Support for Archive Formats Action
 	if [[ $opt == *"Install Support for Archive Formats"* ]]
 	then
-		echo "Installing Support for Archive Formats"
+		printMessage "Installing Support for Archive Formats"
 		installPackage zip
 		installPackage unzip
 		installPackage p7zip
@@ -242,12 +288,15 @@ function parse_opt() {
 	# Fix keyboard accents
 	if [[ $opt == *"Fix keyboard accents on latin keyboard"* ]]
 	then
-		echo "Setting up ibus daemon..."
-		if !(test -e ~/.xprofile); then
+		printMessage "Setting up ibus daemon"
+		cd "$HOME" || exit
+		if [ ! -e .xprofile ]; then
+			echo "Creating .xprofile"
 			touch ~/.xprofile
 		fi
-		if (cat ~/.xprofile | grep "ibus">/dev/null); then
-			echo "ibus-daemon already start up on login"
+		#if [ ! -z $(grep "ibus-daemon -drx" ".xprofile") ]; then
+		if (cat < .xprofile | grep "ibus-daemon -drx">/dev/null); then
+			echo "ibus-daemon already start up on login!"
 		else
 			echo "ibus-daemon -drx" >> ~/.xprofile
 		fi
@@ -256,45 +305,45 @@ function parse_opt() {
 	# Add Oibaf Repository
 	if [[ $opt == *"Add Oibaf Repository"* ]]
 	then
-		echo "Adding Oibaf Repository and updating..."
-		addRepository ppa:oibaf/graphics-drivers
+		printMessage "Adding Oibaf Repository and updating" 
+		addRepository oibaf/graphics-drivers
 		sudo apt -y full-upgrade
 	fi
 
 	# Install Gufw Firewall Action
 	if [[ $opt == *"Install Gufw Firewall"* ]]
 	then
-		echo "Installing Gufw Firewall..."
+		printMessage "Installing Gufw Firewall"
 		installPackage gufw
 	fi
 
 	# Install Startup Disk Creator
 	if [[ $opt == *"Install Startup Disk Creator"* ]]
 	then
-		echo "Installing Startup Disk Creator"
+		printMessage "Installing Startup Disk Creator"
 		installPackage usb-creator-gtk
 	fi
 
 	# Install GDebi Action
 	if [[ $opt == *"Install GDebi"* ]]
 	then
-		echo "Installing GDebi..."
+		printMessage "Installing GDebi"
 		installPackage gdebi
 	fi
 
 	# Install Thunderbird Action
 	if [[ $opt == *"Replace Pantheon Mail by the Thunderbird Mail"* ]]
 	then
-		echo "Removing Pantheon Mail..."
+		printMessage "Removing Pantheon Mail"
 		sudo apt --purge remove -y pantheon-mail
-		echo "Installing Thunderbird..."
+		printMessage "Installing Thunderbird"
 		installPackage thunderbird
 	fi
 
 	# Install Skype
 	if [[ $opt == *"Install Skype"* ]]
 	then
-		echo "Installing Skype..."
+		printMessage "Installing Skype"
 		if [[ $(uname -m) == "i686" ]]
 		then
 			wget -O /tmp/skype.deb https://download.skype.com/linux/skype-ubuntu-precise_4.3.0.37-1_i386.deb
@@ -302,18 +351,28 @@ function parse_opt() {
 		elif [[ $(uname -m) == "x86_64" ]]
 		then
 			installPackage apt-transport-https
-			wget -q -O - https://repo.skype.com/data/SKYPE-GPG-KEY | sudo apt-key add -
-			echo "deb https://repo.skype.com/deb stable main" | sudo tee /etc/apt/sources.list.d/skypeforlinux.list
-			sudo apt update
+
+			local repository="skype-stable"
+
+			if [ ! -e /etc/apt/sources.list.d/${repository}.list ]
+			then
+				addRepositoryMessage $repository
+
+				wget -q -O - https://repo.skype.com/data/SKYPE-GPG-KEY | sudo apt-key add -
+				echo "deb https://repo.skype.com/deb stable main" | sudo tee /etc/apt/sources.list.d/skypeforlinux.list
+				sleep 5 # Waits 5 seconds
+				sudo apt update
+				sudo rm /etc/apt/sources.list.d/skypeforlinux.list	# prevent duplicate
+			fi
 			installPackage skypeforlinux
-		fi		
+		fi
 		sudo apt -f install -y
 	fi
 
 	# Install Dropbox Action
 	if [[ $opt == *"Install Dropbox"* ]]
 	then
-		echo "Installing Drobox..."
+		printMessage "Installing Drobox"
 		installPackage git
 		sudo apt --purge remove -y dropbox*
 		installPackage python-gpgme
@@ -324,72 +383,72 @@ function parse_opt() {
 	# Install Liferea Action
 	if [[ $opt == *"Install Liferea"* ]]
 	then
-		echo "Installing Liferea..."
+		printMessage "Installing Liferea"
 		installPackage liferea
 	fi
 
 	# Install Klavaro Action
 	if [[ $opt == *"Install Klavaro"* ]]
 	then
-		echo "Installing Klavaro..."
+		printMessage "Installing Klavaro"
 		installPackage klavaro
 	fi
 
 	# Install VLC Action
 	if [[ $opt == *"Install VLC"* ]]
 	then
-		echo "Installing VLC..."
+		printMessage "Installing VLC"
 		installPackage vlc
 	fi
 
 	# Install Clementine Action
 	if [[ $opt == *"Install Clementine Music Player"* ]]
 	then
-		echo "Installing Clementine Music Player..."
+		printMessage "Installing Clementine Music Player"
 		installPackage clementine
 	fi
 
 	# Install Gimp Action
 	if [[ $opt == *"Install Gimp"* ]]
 	then
-		echo "Installing Gimp Image Editor..."
+		printMessage "Installing Gimp Image Editor"
 		installPackage gimp
 	fi
 
 	# Install Deluge Action
 	if [[ $opt == *"Install Deluge"* ]]
 	then
-		echo "Installing Deluge..."
+		printMessage "Installing Deluge"
 		installPackage deluge
 	fi
 
 	# Install Transmission Action
 	if [[ $opt == *"Install Transmission"* ]]
 	then
-		echo "Installing Transmission..."
+		printMessage "Installing Transmission"
 		installPackage transmission
 	fi
 
 	# Install Atom Action
 	if [[ $opt == *"Install Atom"* ]]
 	then
-		echo "Installing Atom..."
-		addRepository ppa:webupd8team/atom
+		printMessage "Installing Atom"
+		addRepository webupd8team/atom
 		installPackage atom
 	fi
 
 	# Install Sublime Text 3 Action
 	if [[ $opt == *"Install Sublime Text 3"* ]]
 	then
-		echo "Installing Sublime Text 3..."
-	  	addRepository ppa:webupd8team/sublime-text-3
+		printMessage "Installing Sublime Text 3"
+	  	addRepository webupd8team/sublime-text-3
 		installPackage sublime-text-installer
 	fi
 
 	# Install VS Code Action
 	if [[ $opt == *"Install VS Code"* ]]
 	then
-		echo "Installing VS Code..."
+		printMessage "Installing VS Code"
 		if [[ $(uname -m) == "i686" ]]
 		then
 			wget -O /tmp/vscode.deb https://go.microsoft.com/fwlink/?LinkID=760680
@@ -397,10 +456,20 @@ function parse_opt() {
 			sudo apt install -f
 		elif [[ $(uname -m) == "x86_64" ]]
 		then
-			sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-			curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-			sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-			sudo apt update
+			local repository="vscode"
+
+			if [ ! -e /etc/apt/sources.list.d/${repository}.list ]
+			then
+				addRepositoryMessage $repository
+
+				curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+				sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+				sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+				sleep 5 # Waits 5 seconds
+				sudo apt update
+				sudo apt upgrade
+				sudo apt update
+			fi
 			installPackage code
 		fi
 	fi
@@ -408,14 +477,14 @@ function parse_opt() {
 	# Install LibreOffice Action
 	if [[ $opt == *"Install LibreOffice"* ]]
 	then
-		echo "Installing LibreOffice..."
+		printMessage "Installing LibreOffice"
 		installPackage libreoffice
 	fi
 
 	# Install WPS Office
 	if [[ $opt == *"Install WPS Office"* ]]
 	then
-		echo "Installing WPS Office..."
+		printMessage "Installing WPS Office"
 		if [[ $(uname -m) == "i686" ]]
 		then
 			wget -O /tmp/wps-office.deb http://kdl1.cache.wps.com/ksodl/download/linux/a21//wps-office_10.1.0.5707~a21_i386.deb
@@ -438,7 +507,7 @@ function parse_opt() {
 	# Install TLP
 	if [[ $opt == *"Install TLP"* ]]
 	then
-		echo "Installing TLP..."
+		printMessage "Installing TLP"
 		sudo apt --purge remove -y laptop-mode-tools	#Avoid conflict with TLP
 		installPackage tlp
 		installPackage tlp-rdw
@@ -447,53 +516,68 @@ function parse_opt() {
 	# Install Redshift Action
 	if [[ $opt == *"Install Redshift"* ]]
 	then
-		echo "Installing Redshift..."
+		printMessage "Installing Redshift"
 		installPackage redshift-gtk
 	fi
 
 	# Install Gnome Disk Utility Action
 	if [[ $opt == *"Install Disk Utility"* ]]
 	then
-		echo "Installing Gnome Disk Utility..."
+		printMessage "Installing Gnome Disk Utility"
 		installPackage gnome-disk-utility
 	fi
 
 	# Install Brasero Action
 	if [[ $opt == *"Install Brasero"* ]]
 	then
-		echo "Installing Brasero..."
+		printMessage "Installing Brasero"
 		installPackage brasero
 	fi
 
 	# Install Spotify Action
 	if [[ $opt == *"Install Spotify"* ]]
 	then
-		echo "Installing Spotify..."
-		sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0DF731E45CE24F27EEEB1450EFDC8610341D9410
-		echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
-		sudo apt-get update
-		installPackage spotify-client
+		printMessage "Installing Spotify"
 
+		local repository="spotify"
+
+		if [ ! -e /etc/apt/sources.list.d/${repository}.list ] 
+		then
+			addRepositoryMessage $repository
+
+			sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EFDC8610341D9410
+			echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
+			sudo apt-get update
+		fi
+		installPackage spotify-client
 	fi
 
 	# Install Ubuntu Restricted Extras Action
 	if [[ $opt == *"Install Ubuntu Restricted Extras"* ]]
 	then
-		echo "Installing Ubuntu Restricted Extras..."
+		printMessage "Installing Ubuntu Restricted Extras"
 		installPackage ubuntu-restricted-extras
+	fi
+
+	# Install Grub Customizer Action
+	if [[ $opt == *"Install Grub Customizer"* ]]
+	then
+		printMessage "Installing Grub Customizer"
+		addRepository danielrichter2007/grub-customizer
+		installPackage grub-customizer
 	fi
 
 	# Fix Broken Packages Action
 	if [[ $opt == *"Fix Broken Packages"* ]]
 	then
-		echo "Fixing the broken packages..."
+		printMessage "Fixing the broken packages"
 		sudo apt -y -f install
 	fi
 
 	# Clean-Up Junk Action
 	if [[ $opt == *"Clean-Up Junk"* ]]
 	then
-		echo "Cleaning-up junk..."
+		printMessage "Cleaning-up junk"
 		sudo apt -y autoremove
 		sudo apt -y autoclean
 	fi
