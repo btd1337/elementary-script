@@ -6,7 +6,11 @@ A tiny script that helps you perform necessary tasks after you install elementar
 
 ## OS Version Compatibility
 
-elementary-script will always support the lastest stable version of elementary OS, which at the moment is **elementary OS 0.4 Loki** and others Ubuntu based systems as Linux Mint and Ubuntu.
+This script will support the lastest stable version of:
+- elementary OS
+- Linux Mint
+- Ubuntu
+- and others Ubuntu based systems
 
 ## Run
 
@@ -37,6 +41,10 @@ cd elementary-script
 [Diolinux](http://www.diolinux.com.br/2016/12/elementary-script-pos-instalacao.html)
 
 [Terminal Aberto](http://terminalaberto.com/2017/03/01/elementary-script-um-facilitador-de-servico-para-o-elementary-os/)
+
+## Did you find a problem?
+
+Report here: [Support](https://github.com/btd1337/elementary-script/issues)
 
 ## Donate
 
