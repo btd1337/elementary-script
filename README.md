@@ -1,6 +1,6 @@
 # elementary-script
 
-A tiny script that helps you perform necessary tasks after you install elementary OS or others Ubuntu based systems.
+A tiny script that helps you perform necessary tasks after you install Ubuntu based systems as elementary OS, Linux Mint and Ubuntu itself. It saves your post-installation time.
 
 ![Screenshot](https://raw.githubusercontent.com/btd1337/elementary-script/master/screenshot.jpeg)
 
