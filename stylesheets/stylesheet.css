@@ -25,6 +25,16 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0 0 20px;
 }
 
+h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+h1.img {
+	margin-right: .5rem;
+}
+
 li {
   line-height: 1.4 ;
 }
