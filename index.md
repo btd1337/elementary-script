@@ -39,11 +39,9 @@ cd elementary-script
 
 [Terminal Aberto](http://terminalaberto.com/2017/03/01/elementary-script-um-facilitador-de-servico-para-o-elementary-os/)
 
-## Did you find a problem?
-<dl>
-    <dt>Report here</dt>
-    <dd>[Support](https://github.com/btd1337/elementary-script/issues)</dd>
-</dl>
+## Problems or Ideas
+
+Report here: [Support](https://github.com/btd1337/elementary-script/issues)
 
 ## Donate
 
