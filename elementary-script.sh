@@ -167,6 +167,7 @@ function main() {
 		FALSE "Install VS Code" "Visual Studio Code is a code editor redefined and optimized for building and debugging modern web and cloud applications" \
 		FALSE "Install LibreOffice" "A powerful office suite" \
 		FALSE "Install WPS Office" "The most compatible free office suite" \
+		FALSE "Install Steam" "Steam is one of the most popular digital game download stores" \
 		FALSE "Install TLP" "Install TLP to save battery and prevent overheating" \
 		FALSE "Install Redshift" "Use night shift to save your eyes" \
 		FALSE "Install Disk Utility" "Gnome Disk Utility is a tool to manage disk drives and media" \
@@ -574,6 +575,13 @@ function parse_opt() {
 		sudo dpkg -i /tmp/wps-office-ul.deb
 		sudo dpkg -i /tmp/wps-office-language-all.deb
 		sudo apt -y -f install
+	fi
+
+	# Install Steam
+	if [[ $opt == *"Install Steam"* ]]
+	then
+		printInstallMessage "Installing Steam"
+		installPackage steam
 	fi
 
 	# Install TLP
