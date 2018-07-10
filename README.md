@@ -35,6 +35,7 @@ cd elementary-script
 ## References
 
 [Diolinux](http://www.diolinux.com.br/2016/12/elementary-script-pos-instalacao.html)
+
 [Terminal Aberto](http://terminalaberto.com/2017/03/01/elementary-script-um-facilitador-de-servico-para-o-elementary-os/)
 
 ## Donate
