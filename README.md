@@ -2,6 +2,7 @@
 
 A tiny script that helps you perform necessary tasks after you install Ubuntu based systems as elementary OS, Linux Mint and Ubuntu itself. It saves your post-installation time.
 
+
 ![Screenshot](https://raw.githubusercontent.com/btd1337/elementary-script/master/screenshot.jpeg)
 
 ## OS Version Compatibility
@@ -14,18 +15,18 @@ This script will support the lastest stable version of:
 
 ## Run
 
-#### with curl
+### Method 1 | With curl
 
 ```shell
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/btd1337/elementary-script/master/elementary-script.sh)"
 ```
 
-#### with wget
+### Method 2 | With wget
 
 ```shell
 bash -c "$(wget https://raw.githubusercontent.com/btd1337/elementary-script/master/elementary-script.sh -O -)"
 ```
-#### Cloning git
+### Method 3 | With git
 
 Copy and paste the following line into a terminal window in order to run the script.
 
@@ -42,7 +43,7 @@ cd elementary-script
 
 [Terminal Aberto](http://terminalaberto.com/2017/03/01/elementary-script-um-facilitador-de-servico-para-o-elementary-os/)
 
-## Did you find a problem?
+## Problems or Ideas
 
 Report here: [Support](https://github.com/btd1337/elementary-script/issues)
 
