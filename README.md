@@ -1,4 +1,4 @@
-# elementary-script
+# ![Icon](https://raw.githubusercontent.com/btd1337/elementary-script/master/icon.svg)  elementary-script
 
 A tiny script that helps you perform necessary tasks after you install Ubuntu based systems as elementary OS, Linux Mint and Ubuntu itself. It saves your post-installation time.
 
