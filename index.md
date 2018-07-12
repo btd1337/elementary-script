@@ -41,10 +41,11 @@ cd elementary-script
   3. Execute the commands below:
   ```
   sudo apt install purge-ppa
-  sudo purge-ppa -d xenial ppa:oibaf/graphics-drivers
+  sudo purge-ppa ppa:oibaf/graphics-drivers
   sudo reboot
   ```
-  The system boots up completely again.
+
+	The system boots up completely again.
   
 ## Problems or Ideas
 Report here: [Support](https://github.com/btd1337/elementary-script/issues)
