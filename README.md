@@ -13,7 +13,6 @@ This script will support the lastest stable version of:
 - and others Ubuntu based systems
 
 ## Run
-
 #### Method 1 | With curl
 ```shell
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/btd1337/elementary-script/master/elementary-script.sh)"
@@ -45,10 +44,11 @@ cd elementary-script
   3. Execute the commands below:
   ```
   sudo apt install purge-ppa
-  sudo purge-ppa -d xenial ppa:oibaf/graphics-drivers
+  sudo purge-ppa ppa:oibaf/graphics-drivers
   sudo reboot
   ```
-  The system boots up completely again.
+
+	The system boots up completely again.
   
 ## Problems or Ideas
 Report here: [Support](https://github.com/btd1337/elementary-script/issues)
