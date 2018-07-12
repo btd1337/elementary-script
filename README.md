@@ -42,11 +42,11 @@ cd elementary-script
   2. Login with user name and password
 
   3. Execute the commands below:
-  ```
-  sudo apt install purge-ppa
-  sudo purge-ppa ppa:oibaf/graphics-drivers
-  sudo reboot
-  ```
+    ```
+    sudo apt install purge-ppa
+    sudo purge-ppa ppa:oibaf/graphics-drivers
+    sudo reboot
+    ```
 
 	The system boots up completely again.
   
