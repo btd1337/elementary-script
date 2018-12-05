@@ -59,5 +59,6 @@ Report here: [Support](https://github.com/btd1337/elementary-script/issues)
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=X85LVKF3HYPZL&lc=US&item_name=btd1337&item_number=elementary%2dscript&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
 ## License
-This script is a fork of https://github.com/ylrxeidx/elementary-script and follows your license.
+This project is a fork of [ylrxeidx/elementary-script](https://github.com/ylrxeidx/elementary-script) and follows your license.
+
 [The MIT License](http://ylrxeidx.mit-license.org/ "The MIT License")
