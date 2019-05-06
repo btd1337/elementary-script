@@ -138,6 +138,7 @@ function main() {
 		--column=Picks --column=Actions --column=Description \
 		TRUE "Update System" "Updates the package lists, the system packages and Applications"  \
 		TRUE "Enable PPAs" "Another extra layer of security and another level of annoyance. You cannot add PPA by default in Loki" \
+		FALSE "Enable System Tray Legacy Icons" "Enable again Wingpanel Ayatana needed for system tray programs like Dropbox, Slack and others" \
 		FALSE "Install Elementary Tweaks" "Installing themes in elementary OS is a much easier task thanks to elementary Tweaks tool" \
 		FALSE "Install Urutau Icons" "The most complete package of icons for third-party applications with elementary OS design" \
 		FALSE "Install Elementary X" "Original elementary theme with some tweaks and OS X window controls" \
@@ -206,6 +207,18 @@ function parse_opt() {
 	then
 		printInstallMessage "Enabling PPAs"
 		installPackage software-properties-common
+	fi
+	
+	# Enable Wingpanel Ayatana
+	if [[ $opt == *"Enable System Tray Legacy Icons"* ]]
+	then
+		printInstallMessage "Enabling System Tray Legacy Icons"
+		mkdir -p ~/.config/autostart
+		cp /etc/xdg/autostart/indicator-application.desktop ~/.config/autostart/
+		sed -i 's/^OnlyShowIn.*/OnlyShowIn=Unity;GNOME;Pantheon;/' ~/.config/autostart/indicator-application.desktop
+		wget http://ppa.launchpad.net/elementary-os/stable/ubuntu/pool/main/w/wingpanel-indicator-ayatana/wingpanel-indicator-ayatana_2.0.3+r27+pkg17~ubuntu0.4.1.1_amd64.deb
+		sudo dpkg -i wingpanel-indicator-ayatana_2.0.3+r27+pkg17~ubuntu0.4.1.1_amd64.deb
+		sleep 5 # Waits 5 seconds
 	fi
 
 	# Install Elementary Tweaks Action
