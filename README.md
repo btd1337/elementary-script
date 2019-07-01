@@ -31,6 +31,17 @@ git clone https://github.com/btd1337/elementary-script
 cd elementary-script
 ./elementary-script.sh
 ```
+## Donate
+
+Appreciate for coffee or beer :)
+
+##### Option 1:
+
+[![Ko-fi](https://ko-fi.com/img/Kofi_Logo_Blue.svg)](https://ko-fi.com/btd1337)
+
+##### Option 2:
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=X85LVKF3HYPZL&lc=US&item_name=btd1337&item_number=elementary%2dscript&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
 ## Known Issues
 * Oibaf Repository:
@@ -50,18 +61,6 @@ cd elementary-script
 
 	The system boots up completely again.
 	
-## Donate
-
-Appreciate for coffee or beer :)
-
-##### Option 1:
-
-[![Ko-fi](https://ko-fi.com/img/Kofi_Logo_Blue.svg)](https://ko-fi.com/btd1337)
-
-##### Option 2:
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=X85LVKF3HYPZL&lc=US&item_name=btd1337&item_number=elementary%2dscript&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
-
 ## Problems or Ideas
 Report here: [Support](https://github.com/btd1337/elementary-script/issues)
 
